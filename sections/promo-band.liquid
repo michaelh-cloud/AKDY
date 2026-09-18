@@ -6,20 +6,32 @@
 {% endcomment %}
 <section class="promo">
   <div class="promo-inner">
-    <a class="promo-media" href="{{ section.settings.link | default: '#' }}"{% if section.settings.link == blank %} data-todo="pending"{% endif %}>
+    {%- capture promo_media -%}
       {%- if section.settings.image -%}
         {{ section.settings.image | image_url: width: 1600 | image_tag: width: 800, height: 800, alt: section.settings.alt, loading: 'lazy' }}
       {%- else -%}
         <img src="{{ section.settings.image_url }}" alt="{{ section.settings.alt }}" width="800" height="800" loading="lazy">
       {%- endif -%}
-    </a>
+    {%- endcapture -%}
+    {%- if section.settings.link != blank -%}
+      <a class="promo-media" href="{{ section.settings.link }}">{{ promo_media }}</a>
+    {%- else -%}
+      {% comment %} No link configured yet — plain, non-clickable wrapper. {% endcomment %}
+      <div class="promo-media">{{ promo_media }}</div>
+    {%- endif -%}
     <div class="promo-panel">
       <h1>{{ section.settings.heading }}</h1>
       <div class="rule-flourish"></div>
       <div class="promo-copy">
         {{ section.settings.body }}
       </div>
-      {% if section.settings.cta_label != blank %}<a class="btn-green" href="{{ section.settings.link | default: '#' }}"{% if section.settings.link == blank %} data-todo="pending"{% endif %}>{{ section.settings.cta_label }}</a>{% endif %}
+      {%- if section.settings.cta_label != blank -%}
+        {%- if section.settings.link != blank -%}
+          <a class="btn-green" href="{{ section.settings.link }}">{{ section.settings.cta_label }}</a>
+        {%- else -%}
+          <span class="btn-green" aria-disabled="true">{{ section.settings.cta_label }}</span>
+        {%- endif -%}
+      {%- endif -%}
     </div>
   </div>
 </section>

@@ -10,18 +10,30 @@
   <div class="hero-track">
     {%- for block in section.blocks -%}
     <div class="hero-slide" {{ block.shopify_attributes }}>
-      <a href="{{ block.settings.link | default: '#' }}"{% if block.settings.link == blank %} data-todo="pending"{% endif %}>
+      {%- capture hero_slide_media -%}
         {%- if block.settings.image -%}
           {{ block.settings.image | image_url: width: 2684 | image_tag: width: 1342, height: 600, alt: block.settings.alt }}
         {%- else -%}
           <img src="{{ block.settings.image_url }}" alt="{{ block.settings.alt }}" width="1342" height="600">
         {%- endif -%}
-      </a>
+      {%- endcapture -%}
+      {%- if block.settings.link != blank -%}
+        <a href="{{ block.settings.link }}">{{ hero_slide_media }}</a>
+      {%- else -%}
+        {% comment %} No link configured yet — plain, non-clickable wrapper so the image doesn't look tappable with nowhere to go. {% endcomment %}
+        <div class="hero-slide-media">{{ hero_slide_media }}</div>
+      {%- endif -%}
       {%- if block.settings.eyebrow != blank or block.settings.heading != blank -%}
       <div class="hero-caption">
         {% if block.settings.eyebrow != blank %}<p class="eyebrow">{{ block.settings.eyebrow }}</p>{% endif %}
         {% if block.settings.heading != blank %}<h2>{{ block.settings.heading }}</h2>{% endif %}
-        {% if block.settings.cta_label != blank %}<a class="btn-green" href="{{ block.settings.link | default: '#' }}"{% if block.settings.link == blank %} data-todo="pending"{% endif %}>{{ block.settings.cta_label }}</a>{% endif %}
+        {%- if block.settings.cta_label != blank -%}
+          {%- if block.settings.link != blank -%}
+            <a class="btn-green" href="{{ block.settings.link }}">{{ block.settings.cta_label }}</a>
+          {%- else -%}
+            <span class="btn-green" aria-disabled="true">{{ block.settings.cta_label }}</span>
+          {%- endif -%}
+        {%- endif -%}
       </div>
       {%- endif -%}
     </div>

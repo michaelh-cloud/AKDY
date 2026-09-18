@@ -5,13 +5,19 @@
 <section class="info-blocks">
   <div class="info-grid">
     {%- for block in section.blocks -%}
-    <a {% if block.settings.wide %}class="tile-wide" {% endif %}href="{{ block.settings.link | default: '#' }}"{% if block.settings.link == blank %} data-todo="pending"{% endif %} {{ block.shopify_attributes }}>
+    {%- capture tile_media -%}
       {%- if block.settings.image -%}
         {{ block.settings.image | image_url: width: 1260 | image_tag: alt: block.settings.alt, loading: 'lazy' }}
       {%- else -%}
         <img src="{{ block.settings.image_url }}" alt="{{ block.settings.alt }}" width="{{ block.settings.image_width | default: 310 }}" height="{{ block.settings.image_height | default: 300 }}" loading="lazy">
       {%- endif -%}
-    </a>
+    {%- endcapture -%}
+    {%- if block.settings.link != blank -%}
+      <a class="tile-media{% if block.settings.wide %} tile-wide{% endif %}" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>{{ tile_media }}</a>
+    {%- else -%}
+      {% comment %} No link configured yet — plain, non-clickable wrapper. {% endcomment %}
+      <div class="tile-media{% if block.settings.wide %} tile-wide{% endif %}" {{ block.shopify_attributes }}>{{ tile_media }}</div>
+    {%- endif -%}
     {%- endfor -%}
   </div>
 </section>
