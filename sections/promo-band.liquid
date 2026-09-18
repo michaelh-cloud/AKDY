@@ -1,0 +1,80 @@
+{% comment %}
+  Promo band: animated GIF left (the MORE PATTERNS / MORE STYLES labels live
+  inside the GIF frames), gray collection panel right. The h1 here is the
+  page h1 on the home page — 40px, smaller than the 50px hero h2s, which is
+  the original site's quirk, reproduced deliberately.
+{% endcomment %}
+<section class="promo">
+  <div class="promo-inner">
+    <a class="promo-media" href="{{ section.settings.link | default: '#' }}"{% if section.settings.link == blank %} data-todo="pending"{% endif %}>
+      {%- if section.settings.image -%}
+        {{ section.settings.image | image_url: width: 1600 | image_tag: width: 800, height: 800, alt: section.settings.alt, loading: 'lazy' }}
+      {%- else -%}
+        <img src="{{ section.settings.image_url }}" alt="{{ section.settings.alt }}" width="800" height="800" loading="lazy">
+      {%- endif -%}
+    </a>
+    <div class="promo-panel">
+      <h1>{{ section.settings.heading }}</h1>
+      <div class="rule-flourish"></div>
+      <div class="promo-copy">
+        {{ section.settings.body }}
+      </div>
+      {% if section.settings.cta_label != blank %}<a class="btn-green" href="{{ section.settings.link | default: '#' }}"{% if section.settings.link == blank %} data-todo="pending"{% endif %}>{{ section.settings.cta_label }}</a>{% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Promo band",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Media image",
+      "info": "Square (800 x 800) recommended; the original is an animated GIF. Overrides the external image URL below."
+    },
+    {
+      "type": "text",
+      "id": "image_url",
+      "label": "External image URL",
+      "default": "https://www.akdyusa.com/scs/assets/bathtub_gif_collection.gif",
+      "info": "Used until an image is uploaded above."
+    },
+    {
+      "type": "text",
+      "id": "alt",
+      "label": "Image alt text",
+      "default": "AKDY bathtub pattern and style options"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "AKDY Bathtub Collection"
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body text",
+      "default": "<p>When it comes to our customer's satisfaction, there's no room for compromise. That's why we have chosen to work only with top quality materials and verified suppliers, which are guaranteed to deliver to our high expectations.</p><p>Our AKDY freestanding bathtub comes with an ultra-elegant, modern shape suitable for all types of bathrooms, being made from heavy-duty acrylic and reinforced fiberglass for extra longevity. With a comfortable curved back and perfect soaking depth, you'll be able to relax your body and mind like a full SPA experience!</p>"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label",
+      "default": "Discover More"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promo band"
+    }
+  ]
+}
+{% endschema %}

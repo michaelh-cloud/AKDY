@@ -1,0 +1,43 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-contact",
+      "blocks": {
+        "phone": {
+          "type": "column",
+          "settings": {
+            "icon": "phone",
+            "heading": "(888) 808-0450",
+            "detail": "<p>Got a question? Give us a call from Monday to Friday 9 AM to 5PM PST</p>"
+          }
+        },
+        "email": {
+          "type": "column",
+          "settings": {
+            "icon": "envelope",
+            "heading": "Email Us",
+            "detail": "<p>Questions? Feedback? Send us an email! <a href=\"mailto:help@akdyusa.com\">help@akdyusa.com</a></p>"
+          }
+        },
+        "fax": {
+          "type": "column",
+          "settings": {
+            "icon": "fax",
+            "heading": "Fax Us",
+            "detail": "<p>(626) 376-9710</p>"
+          }
+        },
+        "hq": {
+          "type": "column",
+          "settings": {
+            "icon": "building",
+            "heading": "Headquarters",
+            "detail": "<p>8807 Rochester Ave., Rancho Cucamonga, CA 91730</p>"
+          }
+        }
+      },
+      "block_order": ["phone", "email", "fax", "hq"]
+    }
+  },
+  "order": ["main"]
+}

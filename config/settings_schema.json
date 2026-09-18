@@ -1,0 +1,51 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "AKDY",
+    "theme_version": "0.1.0",
+    "theme_author": "AKDY Imports",
+    "theme_documentation_url": "https://github.com/danielhuang2009/akdy-shopify-theme",
+    "theme_support_url": "https://github.com/danielhuang2009/akdy-shopify-theme/issues"
+  },
+  {
+    "name": "Logo",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo image",
+        "info": "Shown in the header and footer. 210 x 80 recommended. Until one is uploaded, the original akdyusa.com logo is hotlinked."
+      }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      {
+        "type": "text",
+        "id": "social_facebook",
+        "label": "Facebook URL"
+      },
+      {
+        "type": "text",
+        "id": "social_twitter",
+        "label": "Twitter URL"
+      },
+      {
+        "type": "text",
+        "id": "social_instagram",
+        "label": "Instagram URL"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest",
+        "label": "Pinterest URL"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube",
+        "label": "YouTube URL"
+      }
+    ]
+  }
+]

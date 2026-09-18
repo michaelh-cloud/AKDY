@@ -1,0 +1,11 @@
+{% comment %} Stub — real activate-account template comes later. {% endcomment %}
+<div class="container">
+  <h1>Activate Account</h1>
+  {% form 'activate_customer_password' %}
+    {{ form.errors | default_errors }}
+    <input type="password" name="customer[password]" placeholder="Password" autocomplete="new-password" required>
+    <input type="password" name="customer[password_confirmation]" placeholder="Confirm password" autocomplete="new-password" required>
+    <button type="submit" class="btn-green">Activate</button>
+    <button type="submit" class="btn-green" name="decline">Decline Invitation</button>
+  {% endform %}
+</div>

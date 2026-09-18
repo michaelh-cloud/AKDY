@@ -1,0 +1,18 @@
+{% comment %} Stub — real account template comes later. {% endcomment %}
+<div class="container">
+  <h1>My Account</h1>
+  <p>{{ customer.name }} — {{ customer.email }}</p>
+  <p><a href="{{ routes.account_addresses_url }}">Addresses</a> · <a href="{{ routes.account_logout_url }}">Log out</a></p>
+
+  <h2>Order History</h2>
+  {% paginate customer.orders by 20 %}
+    <ul>
+      {% for order in customer.orders %}
+        <li><a href="{{ order.customer_url }}">{{ order.name }}</a> — {{ order.created_at | date: '%B %d, %Y' }} — {{ order.total_price | money }}</li>
+      {% else %}
+        <li>No orders yet.</li>
+      {% endfor %}
+    </ul>
+    {{ paginate | default_pagination }}
+  {% endpaginate %}
+</div>

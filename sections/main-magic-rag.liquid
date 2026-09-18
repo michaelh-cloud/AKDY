@@ -1,0 +1,87 @@
+{% comment %}
+  Magic Rag redemption page — native rebuild of the live /mg page (audit
+  target: live capture 2026-09-18). Same pattern as main-warranty.liquid:
+  the live page has no AKDY-built content of its own — the entire body
+  below the breadcrumb is a NetSuite "External Lead Page" form (Online
+  Lead Form, compid 4480470, formid 22), embedded as a 100% x 1000px
+  iframe:
+
+    https://4480470.extforms.netsuite.com/app/site/crm/externalleadpage.nl
+      ?compid=4480470&formid=22&h=AAFdikaIsm5ygDWBof3lnLk3F7q-fpwS53E4Qce2PJDO9zbVmAU
+
+  This is the "Magic Rag" review-redemption form: customer enters their
+  order number, what they bought, where they bought it, a review nickname
+  and a link to the review they posted, plus contact/shipping info — likely
+  reached via a QR code on the product's packaging, same as the Gift page.
+  Kept on the same NetSuite form for the same reason as Warranty: the
+  workflow keeps working exactly as it does today, no backend decision
+  needed. The iframe URL is a section setting so it can be swapped without
+  a code change.
+
+  Full field list (in case a native Shopify form ever replaces it) is in
+  docs/policy-page-content/magic-rag-form-fields.md.
+{% endcomment %}
+
+<div class="container">
+  {% render 'breadcrumbs' %}
+
+  <div class="magic-rag">
+    <h1 class="page-title sr-only">{{ page.title }}</h1>
+
+    {%- if section.settings.intro != blank -%}
+      <div class="magic-rag-intro">{{ section.settings.intro }}</div>
+    {%- endif -%}
+
+    {%- if section.settings.form_url != blank -%}
+      <iframe
+        class="magic-rag-form-frame"
+        src="{{ section.settings.form_url }}"
+        title="{{ section.settings.form_title | default: 'AKDY Magic Rag Redemption' }}"
+        width="100%"
+        height="{{ section.settings.form_height | default: 1000 }}"
+        loading="lazy">
+      </iframe>
+    {%- else -%}
+      <p class="magic-rag-form-missing" data-todo="magic-rag-form-url">Magic Rag redemption form is not configured yet.</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Magic Rag",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "Intro text",
+      "info": "Optional AKDY-side copy above the form. The live page has none — the NetSuite form has its own banner/intro baked in — so this is blank by default."
+    },
+    {
+      "type": "url",
+      "id": "form_url",
+      "label": "Redemption form embed URL",
+      "default": "https://4480470.extforms.netsuite.com/app/site/crm/externalleadpage.nl?compid=4480470&formid=22&h=AAFdikaIsm5ygDWBof3lnLk3F7q-fpwS53E4Qce2PJDO9zbVmAU",
+      "info": "The live NetSuite lead-form URL. Same backend as today — swap this if the form is ever rebuilt or the link token changes."
+    },
+    {
+      "type": "text",
+      "id": "form_title",
+      "label": "Iframe accessible title",
+      "default": "AKDY Magic Rag Redemption"
+    },
+    {
+      "type": "number",
+      "id": "form_height",
+      "label": "Iframe height (px)",
+      "default": 1000,
+      "info": "Matches the live embed's fixed height (1000px)."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Magic Rag"
+    }
+  ]
+}
+{% endschema %}

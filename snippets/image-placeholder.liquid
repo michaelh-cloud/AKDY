@@ -1,0 +1,9 @@
+{% comment %}
+  "Image not available" tile. Most AKDY parts have no photo — this is the
+  catalogue's normal state, so the placeholder is deliberate page furniture,
+  not an error state. Pass large: true for the PDP-size variant.
+{% endcomment %}
+<div class="img-placeholder{% if large %} img-placeholder--large{% endif %}" role="img" aria-label="Image not available">
+  <span aria-hidden="true">Image not available</span>
+  <svg aria-hidden="true"><use href="#i-image"/></svg>
+</div>

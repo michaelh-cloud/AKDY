@@ -1,0 +1,147 @@
+{% comment %}
+  Gift redemption page — native rebuild of the /gift NetSuite form embed
+  (audit/pages/gift.json; visual source of truth is
+  audit/screenshots/gift--form-embed.png, since the live host page clips
+  the 1000px iframe). No NetSuite URL is referenced anywhere: the banner
+  graphic is a theme asset (or the section's image picker), and the form
+  is presentational only until a submission destination is chosen.
+
+  Live geometry reproduced: 970px content column, 658px banner graphic
+  (the GIFT ribbon, gloves, caption and STEP copy are rasterised inside
+  the image itself), three 313x300 video embeds with no gap, Bootstrap-3
+  style two-column form (455px columns, 30px gutter), full-width blue
+  submit, "* Required fields" legend bottom-right. The embed's own
+  "(c) AKDY Imports" line is dropped — the real site footer follows.
+
+  Mobile (the primary view — the page is reached from a QR code in the
+  product box): single-column form and full-width submit like the live
+  embed, but the videos stack full-width instead of the live embed's
+  broken 120px letterboxed columns, and nothing overflows the viewport
+  (the live embed scrolls horizontally at 390px — a platform defect, not
+  design intent).
+{% endcomment %}
+
+<div class="container">
+  {% render 'breadcrumbs' %}
+
+  <div class="gift">
+    {%- if section.settings.banner_image -%}
+      {{ section.settings.banner_image | image_url: width: 1316 | image_tag: class: 'gift-banner', alt: section.settings.banner_alt }}
+    {%- else -%}
+      <img class="gift-banner" src="{{ 'gift-banner.jpg' | asset_url }}" width="658" height="712" alt="{{ section.settings.banner_alt }}">
+    {%- endif -%}
+
+    {%- assign video_blocks = section.blocks | where: 'type', 'video' -%}
+    {%- if video_blocks.size > 0 -%}
+      <div class="gift-videos">
+        {%- for block in video_blocks -%}
+          <iframe src="{{ block.settings.url }}" title="{{ block.settings.label }}" loading="lazy" allowfullscreen {{ block.shopify_attributes }}></iframe>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <!-- Form is presentational only — submission destination TBD (forms app or email), to be wired later. -->
+    <form class="gift-form" data-preview-inert>
+      <div class="gift-fields">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'field' -%}
+            {%- assign field_id = 'gift-' | append: block.id -%}
+            <div class="gift-field" {{ block.shopify_attributes }}>
+              <label for="{{ field_id }}">{{ block.settings.label }}{% if block.settings.required %} *{% endif %}</label>
+              {%- case block.settings.input_type -%}
+                {%- when 'select' -%}
+                  <select id="{{ field_id }}">
+                    <option value=""></option>
+                    {%- assign opts = block.settings.options | newline_to_br | split: '<br />' -%}
+                    {%- for opt in opts -%}
+                      {%- assign opt_clean = opt | strip -%}
+                      {%- if opt_clean != blank -%}<option>{{ opt_clean }}</option>{%- endif -%}
+                    {%- endfor -%}
+                  </select>
+                {%- when 'state' -%}
+                  <select id="{{ field_id }}">
+                    <option value=""></option>
+                    {%- assign states = 'Alabama,Alaska,Arizona,Arkansas,Armed Forces Americas,Armed Forces Europe,Armed Forces Pacific,California,Colorado,Connecticut,Delaware,District of Columbia,Florida,Georgia,Hawaii,Idaho,Illinois,Indiana,Iowa,Kansas,Kentucky,Louisiana,Maine,Maryland,Massachusetts,Michigan,Minnesota,Mississippi,Missouri,Montana,Nebraska,Nevada,New Hampshire,New Jersey,New Mexico,New York,North Carolina,North Dakota,Ohio,Oklahoma,Oregon,Pennsylvania,Puerto Rico,Rhode Island,South Carolina,South Dakota,Tennessee,Texas,Utah,Vermont,Virginia,Washington,West Virginia,Wisconsin,Wyoming' | split: ',' -%}
+                    {%- for st in states -%}<option>{{ st }}</option>{%- endfor -%}
+                  </select>
+                {%- when 'country' -%}
+                  <select id="{{ field_id }}">
+                    <option selected>United States</option>
+                    {{ all_country_option_tags }}
+                  </select>
+                {%- else -%}
+                  <input type="text" id="{{ field_id }}">
+              {%- endcase -%}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      <button type="button" class="gift-submit">{{ section.settings.submit_label }}</button>
+      <p class="gift-required-legend">{{ section.settings.required_legend }}</p>
+    </form>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Gift page",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Banner graphic",
+      "info": "The GIFT ribbon, gloves photo, caption and STEP copy are part of this image. Unset, the captured live graphic ships with the theme."
+    },
+    {
+      "type": "text",
+      "id": "banner_alt",
+      "label": "Banner alt text",
+      "default": "GIFT — Heat Resistant Cooking Gloves. Your review is important to us, please take a moment to share your experience and claim free gifts. Step 1: write a product review on the retail site where you purchased the product. Step 2: fill out the form and submit."
+    },
+    {
+      "type": "text",
+      "id": "submit_label",
+      "label": "Submit button label",
+      "default": "Submit form"
+    },
+    {
+      "type": "text",
+      "id": "required_legend",
+      "label": "Required-fields legend",
+      "default": "* Required fields"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "video",
+      "name": "How-to video",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Accessible title" },
+        { "type": "text", "id": "url", "label": "Embed URL", "info": "YouTube /embed/ URL" }
+      ]
+    },
+    {
+      "type": "field",
+      "name": "Form field",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label" },
+        {
+          "type": "select",
+          "id": "input_type",
+          "label": "Input type",
+          "options": [
+            { "value": "text", "label": "Text" },
+            { "value": "select", "label": "Dropdown (options below)" },
+            { "value": "state", "label": "US state dropdown" },
+            { "value": "country", "label": "Country dropdown" }
+          ],
+          "default": "text"
+        },
+        { "type": "textarea", "id": "options", "label": "Dropdown options", "info": "One per line; used only by the Dropdown type." },
+        { "type": "checkbox", "id": "required", "label": "Show required asterisk", "default": false }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,47 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "current": {
+    "social_facebook": "",
+    "social_twitter": "",
+    "social_instagram": "",
+    "social_pinterest": "",
+    "social_youtube": "",
+    "sections": {
+      "announcement-bar": {
+        "type": "announcement-bar",
+        "settings": {
+          "text": ""
+        }
+      },
+      "header": {
+        "type": "header",
+        "settings": {
+          "notice_line1": "Free shipping on All items !",
+          "notice_line2": "AKDY products are only shipped to addresses within the contiguous U.S., excluding Alaska, Hawaii, and Puerto Rico.",
+          "notice_line3": "Due to COVID-19, we are noticing that shipping carriers are experiencing delays in processing on some shipments at this time. We appreciate your patience and the continuing support of our products.",
+          "menu": "main-menu"
+        }
+      },
+      "footer": {
+        "type": "footer",
+        "settings": {
+          "heading_help": "Here to Help",
+          "menu_help": "footer",
+          "heading_shop": "Shopping with Us",
+          "menu_shop": "shopping-with-us",
+          "heading_signup": "Email Sign Up",
+          "copyright": "© 2019 – 2026 AKDY Imports. (8807 Rochester Ave. Rancho Cucamonga, CA 91730 USA) All rights reserved."
+        }
+      }
+    },
+    "content_for_index": []
+  }
+}

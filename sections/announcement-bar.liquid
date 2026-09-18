@@ -1,0 +1,19 @@
+{% comment %}
+  The thin green bar at the very top. On the approved design it is empty —
+  a plain 22px brand-green strip — so the text setting defaults to blank.
+{% endcomment %}
+<div class="topbar">{% if section.settings.text != blank %}{{ section.settings.text }}{% endif %}</div>
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Announcement text",
+      "info": "Leave empty for the plain green bar, matching the original site."
+    }
+  ]
+}
+{% endschema %}

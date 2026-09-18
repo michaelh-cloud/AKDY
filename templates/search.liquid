@@ -1,0 +1,20 @@
+{% comment %} Stub — real search template comes later. {% endcomment %}
+<div class="container">
+  <h1>Search</h1>
+  <form action="{{ routes.search_url }}" method="get" role="search">
+    <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search for products" aria-label="Search for products">
+    <button type="submit" class="btn-green">Search</button>
+  </form>
+  {% if search.performed %}
+    {% paginate search.results by 24 %}
+      <ul>
+        {% for item in search.results %}
+          <li><a href="{{ item.url }}">{{ item.title }}</a></li>
+        {% else %}
+          <li>No results for "{{ search.terms | escape }}".</li>
+        {% endfor %}
+      </ul>
+      {{ paginate | default_pagination }}
+    {% endpaginate %}
+  {% endif %}
+</div>

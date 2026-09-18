@@ -1,0 +1,114 @@
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-cols">
+      <div class="footer-brand">
+        <a class="logo" href="{{ routes.root_url }}">
+          {% if settings.logo %}
+            {{ settings.logo | image_url: width: 420 | image_tag: width: 210, height: 80, alt: shop.name, loading: 'lazy' }}
+          {% else %}
+            <img src="https://www.akdyusa.com/scs/assets/logo210.png" alt="{{ shop.name }}" width="210" height="80" loading="lazy">
+          {% endif %}
+        </a>
+        <div class="footer-social">
+          <a href="{{ settings.social_facebook | default: '#' }}"><svg aria-hidden="true"><use href="#i-facebook"/></svg><span class="sr-only">Facebook</span></a>
+          <a href="{{ settings.social_twitter | default: '#' }}"><svg aria-hidden="true"><use href="#i-twitter"/></svg><span class="sr-only">Twitter</span></a>
+          <a href="{{ settings.social_instagram | default: '#' }}"><svg aria-hidden="true"><use href="#i-instagram"/></svg><span class="sr-only">Instagram</span></a>
+          <a href="{{ settings.social_pinterest | default: '#' }}"><svg aria-hidden="true"><use href="#i-pinterest"/></svg><span class="sr-only">Pinterest</span></a>
+          <a href="{{ settings.social_youtube | default: '#' }}"><svg aria-hidden="true"><use href="#i-youtube"/></svg><span class="sr-only">YouTube</span></a>
+        </div>
+      </div>
+
+      <div class="footer-help">
+        <h3>{{ section.settings.heading_help }}</h3>
+        <ul class="footer-links">
+          {% if section.settings.menu_help != blank %}
+            {% for link in section.settings.menu_help.links %}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {% endfor %}
+          {% else %}
+            {% comment %} Approved links, shown until a menu is assigned. {% endcomment %}
+            <li><a href="#" data-todo="support--faqs">FAQs</a></li>
+            <li><a href="#" data-todo="shipping-policy">Shipping Policy</a></li>
+            <li><a href="#" data-todo="privacy-policy">Privacy Policy</a></li>
+            <li><a href="#" data-todo="returns-refunds">Returns &amp; Refunds</a></li>
+            <li><a href="#" data-todo="terms-conditions">Terms &amp; Conditions</a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <div class="footer-shop">
+        <h3>{{ section.settings.heading_shop }}</h3>
+        <ul class="footer-links">
+          {% if section.settings.menu_shop != blank %}
+            {% for link in section.settings.menu_shop.links %}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {% endfor %}
+          {% else %}
+            <li><a href="#" data-todo="about-us">About Us</a></li>
+            <li><a href="#" data-todo="contact-us">Contact Us</a></li>
+            <li><a href="#" data-todo="warranty">Warranty</a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <div class="footer-signup">
+        <h3>{{ section.settings.heading_signup }}</h3>
+        {% form 'customer' %}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <input type="email" name="contact[email]" placeholder="username@domain.com" aria-label="Email address" autocomplete="email" required>
+          <div class="signup-actions">
+            <button type="submit" class="btn-green">Subscribe</button>
+          </div>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="copyright">
+  <div class="container">{{ section.settings.copyright }}</div>
+</div>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading_help",
+      "label": "First column heading",
+      "default": "Here to Help"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_help",
+      "label": "First column menu",
+      "info": "Until a menu is chosen, the approved default links are shown."
+    },
+    {
+      "type": "text",
+      "id": "heading_shop",
+      "label": "Second column heading",
+      "default": "Shopping with Us"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_shop",
+      "label": "Second column menu",
+      "info": "Until a menu is chosen, the approved default links are shown."
+    },
+    {
+      "type": "text",
+      "id": "heading_signup",
+      "label": "Newsletter heading",
+      "default": "Email Sign Up"
+    },
+    {
+      "type": "text",
+      "id": "copyright",
+      "label": "Copyright line",
+      "default": "© 2019 – 2026 AKDY Imports. (8807 Rochester Ave. Rancho Cucamonga, CA 91730 USA) All rights reserved."
+    }
+  ]
+}
+{% endschema %}

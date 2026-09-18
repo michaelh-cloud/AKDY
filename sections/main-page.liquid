@@ -1,0 +1,73 @@
+{% comment %}
+  Standard content page — FAQs, the four policies, About Us. On the live
+  site (2026-08-04 captures in audit/screenshots/) every one of these
+  pages is breadcrumbs + a 1200x400 CMS banner graphic (about-us: 1200x600
+  photo) + the CMS HTML body, with no on-page text <h1>.
+
+  Banner: the image picker wins when set; otherwise banner_asset names a
+  file shipped in assets/ (the six live banners were downloaded there as
+  page-banner-<handle>.jpg, and templates/page.<handle>.json pre-wires
+  each). When a banner renders, the title drops to sr-only — the live
+  pages never show a text title. With neither set, the italic text title
+  shows (templates/page.json, the default, ships that way).
+
+  The body renders from page.content so Min edits it in the admin.
+  Cleaned body HTML for the six migrated pages is in
+  docs/policy-page-content/. The page-body--<handle> class scopes the
+  per-page typography variants measured from the live pages (see the
+  Content pages block in akdy.css).
+{% endcomment %}
+
+<div class="container">
+  {% render 'breadcrumbs' %}
+
+  <article class="page">
+    {%- if section.settings.banner_image -%}
+      {{ section.settings.banner_image | image_url: width: 2280 | image_tag: class: 'page-banner', alt: '' }}
+      <h1 class="page-title sr-only">{{ page.title }}</h1>
+    {%- elsif section.settings.banner_asset != blank -%}
+      <img class="page-banner" src="{{ section.settings.banner_asset | asset_url }}" alt=""
+           width="{{ section.settings.banner_asset_width | default: 1200 }}"
+           height="{{ section.settings.banner_asset_height | default: 400 }}">
+      <h1 class="page-title sr-only">{{ page.title }}</h1>
+    {%- else -%}
+      <h1 class="page-title">{{ page.title }}</h1>
+    {%- endif -%}
+    <div class="page-body page-body--{{ page.handle }}">
+      {{ page.content }}
+    </div>
+  </article>
+</div>
+
+{% schema %}
+{
+  "name": "Page",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Banner image",
+      "info": "Shown above the content instead of the text title. Leave unset for a plain titled page."
+    },
+    {
+      "type": "text",
+      "id": "banner_asset",
+      "label": "Banner asset filename",
+      "info": "Fallback when no banner image is picked: the name of a file in the theme's assets folder, e.g. page-banner-faqs.jpg. The captured live banners ship there."
+    },
+    {
+      "type": "number",
+      "id": "banner_asset_width",
+      "label": "Banner asset width (px)",
+      "default": 1200,
+      "info": "Intrinsic size of the asset file, for layout stability. The captured banners are 1200x400 (about-us: 1200x600)."
+    },
+    {
+      "type": "number",
+      "id": "banner_asset_height",
+      "label": "Banner asset height (px)",
+      "default": 400
+    }
+  ]
+}
+{% endschema %}

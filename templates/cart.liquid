@@ -1,0 +1,21 @@
+{% comment %} Stub — real cart template comes later. {% endcomment %}
+<div class="container">
+  <h1>Your Cart</h1>
+  {% if cart.item_count > 0 %}
+    {% form 'cart', cart %}
+      <ul>
+        {% for item in cart.items %}
+          <li>
+            <a href="{{ item.url }}">{{ item.product.title }}</a>
+            — {{ item.quantity }} × {{ item.final_price | money }}
+          </li>
+        {% endfor %}
+      </ul>
+      <p>Subtotal: {{ cart.total_price | money }}</p>
+      <button type="submit" name="checkout" class="btn-green">Check Out</button>
+    {% endform %}
+  {% else %}
+    <p>Your cart is currently empty.</p>
+    <a class="btn-green" href="{{ routes.root_url }}">Continue Shopping</a>
+  {% endif %}
+</div>

@@ -1,0 +1,157 @@
+<header>
+  <div class="shipping-notice">
+    {% if section.settings.notice_line1 != blank %}<p>{{ section.settings.notice_line1 }}</p>{% endif %}
+    {% if section.settings.notice_line2 != blank %}<p>{{ section.settings.notice_line2 }}</p>{% endif %}
+    {% if section.settings.notice_line3 != blank %}<p>{{ section.settings.notice_line3 }}</p>{% endif %}
+  </div>
+
+  <div class="container">
+    <div class="utility-row">
+      {% if customer %}
+        <span class="greeting">Oh, hi, {{ customer.first_name }}!</span>
+        <a href="{{ routes.account_url }}">My Account</a>
+        <a href="{{ routes.account_logout_url }}">Log Out</a>
+      {% else %}
+        <span class="greeting">Oh, hi there!</span>
+        <a href="{{ routes.account_login_url }}">Login or Register</a>
+      {% endif %}
+      <a href="#" data-todo="quick-order">Quick Order</a>
+    </div>
+
+    <div class="main-bar">
+      <a class="logo" href="{{ routes.root_url }}">
+        {% if settings.logo %}
+          {{ settings.logo | image_url: width: 420 | image_tag: width: 210, height: 80, alt: shop.name }}
+        {% else %}
+          <img src="https://www.akdyusa.com/scs/assets/logo210.png" alt="{{ shop.name }}" width="210" height="80">
+        {% endif %}
+      </a>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">
+        <svg aria-hidden="true"><use href="#i-bars"/></svg>
+        <span class="sr-only">Menu</span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Main">
+        <ul>
+          {% if section.settings.menu != blank %}
+            {% comment %}
+              Any item with children gets a hover dropdown (desktop) or an
+              expandable section inside the hamburger (mobile), nested to
+              Shopify's full three link levels: parent, children, and their
+              children as right-flyout submenus, per the live SUPPORT
+              dropdown. Toggle-button ids are structural (section id +
+              loop indices) — never derived from titles, because three
+              support categories all display "Accessories". An item with
+              no children stays a plain link: no chevron, no panel.
+            {% endcomment %}
+            {% for link in section.settings.menu.links %}
+              {%- if link.links.size > 0 -%}
+                {%- assign panel_id = section.id | append: '-subnav-' | append: forloop.index -%}
+                <li class="nav-item has-children">
+                  <a href="{{ link.url }}">{{ link.title }}</a>
+                  <button type="button" class="submenu-toggle" aria-expanded="false" aria-controls="{{ panel_id }}">
+                    <svg aria-hidden="true"><use href="#i-chevron-down"/></svg>
+                    <span class="sr-only">Expand {{ link.title }} submenu</span>
+                  </button>
+                  <ul class="nav-panel" id="{{ panel_id }}">
+                    {%- for child in link.links -%}
+                      {%- if child.links.size > 0 -%}
+                        {%- assign sub_id = panel_id | append: '-' | append: forloop.index -%}
+                        <li class="nav-sub-item has-children">
+                          <a href="{{ child.url }}">
+                            {{ child.title }}
+                            <svg class="nav-flyout-chevron" aria-hidden="true"><use href="#i-angle-right"/></svg>
+                          </a>
+                          <button type="button" class="submenu-toggle" aria-expanded="false" aria-controls="{{ sub_id }}">
+                            <svg aria-hidden="true"><use href="#i-chevron-down"/></svg>
+                            <span class="sr-only">Expand {{ child.title }} submenu</span>
+                          </button>
+                          <ul class="nav-sub" id="{{ sub_id }}">
+                            {%- for grandchild in child.links -%}
+                              <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
+                            {%- endfor -%}
+                          </ul>
+                        </li>
+                      {%- else -%}
+                        <li><a href="{{ child.url }}">{{ child.title }}</a></li>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </ul>
+                </li>
+              {%- else -%}
+                <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+              {%- endif -%}
+            {% endfor %}
+          {% else %}
+            {% comment %} Approved nav, shown until a menu is assigned. {% endcomment %}
+            <li><a href="{{ routes.root_url }}">Home</a></li>
+            <li><a href="#" data-todo="new-arrivals">New Arrivals</a></li>
+            <li><a href="#" data-todo="home-kitchen">Home &amp; Kitchen</a></li>
+            <li><a href="#" data-todo="bathroom">Bathroom</a></li>
+            <li><a href="#" data-todo="sales">Sales</a></li>
+            <li><a href="#" data-todo="support">Support</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+
+      <div class="header-icons">
+        <div class="social">
+          <a class="icon-link" href="{{ settings.social_facebook | default: '#' }}"><svg aria-hidden="true"><use href="#i-facebook"/></svg><span class="sr-only">Facebook</span></a>
+          <a class="icon-link" href="{{ settings.social_twitter | default: '#' }}"><svg aria-hidden="true"><use href="#i-twitter"/></svg><span class="sr-only">Twitter</span></a>
+          <a class="icon-link" href="{{ settings.social_instagram | default: '#' }}"><svg aria-hidden="true"><use href="#i-instagram"/></svg><span class="sr-only">Instagram</span></a>
+          <a class="icon-link" href="{{ settings.social_pinterest | default: '#' }}"><svg aria-hidden="true"><use href="#i-pinterest"/></svg><span class="sr-only">Pinterest</span></a>
+          <a class="icon-link" href="{{ settings.social_youtube | default: '#' }}"><svg aria-hidden="true"><use href="#i-youtube"/></svg><span class="sr-only">YouTube</span></a>
+        </div>
+        <span class="divider"></span>
+        <a class="icon-link" href="{{ routes.search_url }}"><svg aria-hidden="true"><use href="#i-search"/></svg><span class="sr-only">Search for products</span></a>
+        <span class="divider"></span>
+        <a class="icon-link cart-link" href="{{ routes.cart_url }}">
+          <svg aria-hidden="true"><use href="#i-bag"/></svg>
+          <span class="sr-only">Cart,</span>
+          <span class="cart-count">{{ cart.item_count }}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Shipping notice"
+    },
+    {
+      "type": "text",
+      "id": "notice_line1",
+      "label": "Line 1",
+      "default": "Free shipping on All items !"
+    },
+    {
+      "type": "text",
+      "id": "notice_line2",
+      "label": "Line 2",
+      "default": "AKDY products are only shipped to addresses within the contiguous U.S., excluding Alaska, Hawaii, and Puerto Rico."
+    },
+    {
+      "type": "text",
+      "id": "notice_line3",
+      "label": "Line 3",
+      "default": "Due to COVID-19, we are noticing that shipping carriers are experiencing delays in processing on some shipments at this time. We appreciate your patience and the continuing support of our products."
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "info": "Until a menu is chosen, the header shows the approved default navigation (no dropdowns). Items with child links open hover dropdowns; a further nested level flies out to the right, like the live site's SUPPORT menu."
+    }
+  ]
+}
+{% endschema %}

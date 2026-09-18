@@ -1,0 +1,24 @@
+{% comment %}
+  Product card for the browse grid.
+  Params: product (required), show_compare (boolean).
+  Stars are static — the original renders five empty stars with no review
+  system wired up; a review app can replace .stars later.
+{% endcomment %}
+<div class="product-card">
+  <a class="card-media" href="{{ product.url }}">
+    {%- if product.featured_image -%}
+      {{ product.featured_image | image_url: width: 600 | image_tag: widths: '300, 600', alt: product.title, loading: 'lazy' }}
+    {%- else -%}
+      {% render 'image-placeholder' %}
+    {%- endif -%}
+  </a>
+  <a class="card-title" href="{{ product.url }}">{{ product.title }}</a>
+  <p class="card-price">{{ product.price | money }}</p>
+  <div class="stars" role="img" aria-label="No reviews yet">{% for i in (1..5) %}<svg aria-hidden="true"><use href="#i-star"/></svg>{% endfor %}</div>
+  {%- if show_compare -%}
+    <label class="compare"><input type="checkbox" class="compare-check"> Add to compare</label>
+  {%- endif -%}
+  {%- unless product.available -%}
+    <p class="badge-oos"><svg aria-hidden="true"><use href="#i-alert"/></svg> Out Of Stock</p>
+  {%- endunless -%}
+</div>

@@ -1,0 +1,180 @@
+{% comment %}
+  Product detail page, matching the part-cf0015 audit layout: gallery left
+  (styled placeholder when the product has no image — the normal state for
+  AKDY's parts catalogue), buy column right, tab strip, description with
+  auto-detected leading warning line (see akdy.js), ratings block at the
+  bottom.
+{% endcomment %}
+
+{%- assign variant = product.selected_or_first_available_variant -%}
+
+<div class="container">
+  {% render 'breadcrumbs' %}
+
+  <div class="pdp">
+    <div class="pdp-gallery">
+      {%- if product.images.size > 0 -%}
+        <div class="pdp-media">
+          {{ product.featured_image | image_url: width: 1200 | image_tag: widths: '600, 1200', alt: product.title }}
+        </div>
+        {%- if product.images.size > 1 -%}
+          <div class="pdp-thumbs">
+            {%- for image in product.images limit: 6 -%}
+              <button type="button"{% if forloop.first %} aria-current="true"{% endif %}>
+                {{ image | image_url: width: 160 | image_tag: alt: image.alt, loading: 'lazy' }}
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      {%- else -%}
+        <div class="pdp-media">
+          {% render 'image-placeholder', large: true %}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="pdp-info">
+      <h1 class="pdp-title">{{ product.title }}</h1>
+      {%- if variant.sku != blank -%}
+        <p class="pdp-sku">SKU: {{ variant.sku }}</p>
+      {%- endif -%}
+      <p class="pdp-price">{{ variant.price | money }}</p>
+      <div class="review-row">
+        <span class="stars" role="img" aria-label="No reviews yet">{% for i in (1..5) %}<svg aria-hidden="true"><use href="#i-star"/></svg>{% endfor %}</span>
+        {{ section.settings.no_reviews_label }}
+      </div>
+
+      {%- if product.available -%}
+        <p class="stock-badge stock-badge--in"><svg aria-hidden="true"><use href="#i-check"/></svg> {{ section.settings.in_stock_label }}</p>
+      {%- else -%}
+        <p class="stock-badge stock-badge--out"><svg aria-hidden="true"><use href="#i-alert"/></svg> {{ section.settings.out_of_stock_label }}</p>
+      {%- endif -%}
+
+      {%- form 'product', product -%}
+        <input type="hidden" name="id" value="{{ variant.id }}">
+        <div class="qty-row">
+          <label for="pdp-quantity">Quantity</label>
+          <input type="number" id="pdp-quantity" name="quantity" value="1" min="1">
+        </div>
+        <div class="pdp-actions">
+          {%- comment -%}
+            The original hides Add to Cart entirely when out of stock.
+          {%- endcomment -%}
+          {%- if product.available -%}
+            <button type="submit" class="btn-green">{{ section.settings.add_to_cart_label }}</button>
+          {%- endif -%}
+          <button type="button" class="btn-outline" data-todo="wishlist">{{ section.settings.wishlist_label }}</button>
+        </div>
+      {%- endform -%}
+
+      {%- if section.settings.show_share -%}
+        {%- assign share_url = shop.url | append: product.url | url_encode -%}
+        <div class="share-row">
+          <a href="https://pinterest.com/pin/create/button/?url={{ share_url }}" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-pinterest"/></svg><span class="sr-only">Pin it</span></a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url }}" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-facebook"/></svg><span class="sr-only">Share on Facebook</span></a>
+          <a href="https://twitter.com/intent/tweet?url={{ share_url }}" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-twitter"/></svg><span class="sr-only">Post on Twitter</span></a>
+        </div>
+      {%- endif -%}
+
+      {%- assign specs = product.metafields.custom.specs_care | metafield_tag -%}
+      <div class="pdp-tabs" role="tablist">
+        <button type="button" role="tab" aria-selected="true">{{ section.settings.overview_label }}</button>
+        {%- if specs != blank -%}
+          <button type="button" role="tab" aria-selected="false">{{ section.settings.specs_label }}</button>
+        {%- endif -%}
+      </div>
+      <div class="tab-pane active">
+        <div class="pdp-desc">{{ product.description }}</div>
+      </div>
+      {%- if specs != blank -%}
+        <div class="tab-pane">
+          <div class="pdp-desc">{{ specs }}</div>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="reviews-block">
+    <h2 class="reviews-heading">{{ section.settings.reviews_heading }}</h2>
+    <p class="no-reviews">{{ section.settings.no_reviews_body }}</p>
+    <p class="review-cta">
+      Be the first to
+      <a class="btn-dark" href="#" data-todo="write-review">{{ section.settings.write_review_label }}</a>
+    </p>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product page",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_share",
+      "label": "Show social share icons",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "in_stock_label",
+      "label": "In-stock badge",
+      "default": "This item is IN STOCK"
+    },
+    {
+      "type": "text",
+      "id": "out_of_stock_label",
+      "label": "Out-of-stock badge",
+      "default": "This item is OUT OF STOCK"
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_label",
+      "label": "Add to cart button",
+      "default": "Add To Shopping Cart"
+    },
+    {
+      "type": "text",
+      "id": "wishlist_label",
+      "label": "Wishlist button",
+      "default": "Add To Wishlist"
+    },
+    {
+      "type": "text",
+      "id": "overview_label",
+      "label": "First tab label",
+      "default": "Overview"
+    },
+    {
+      "type": "text",
+      "id": "specs_label",
+      "label": "Second tab label",
+      "default": "Specs & Care",
+      "info": "The second tab appears only when the product has a custom.specs_care metafield."
+    },
+    {
+      "type": "text",
+      "id": "no_reviews_label",
+      "label": "No-reviews note (buy column)",
+      "default": "No Reviews yet"
+    },
+    {
+      "type": "text",
+      "id": "reviews_heading",
+      "label": "Reviews heading",
+      "default": "Ratings & Reviews"
+    },
+    {
+      "type": "text",
+      "id": "no_reviews_body",
+      "label": "No-reviews message",
+      "default": "No Reviews Available"
+    },
+    {
+      "type": "text",
+      "id": "write_review_label",
+      "label": "Write-review button",
+      "default": "Write A Review"
+    }
+  ]
+}
+{% endschema %}

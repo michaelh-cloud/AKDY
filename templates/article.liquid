@@ -1,0 +1,6 @@
+{% comment %} Stub — real article template comes later. {% endcomment %}
+<div class="container">
+  <h1>{{ article.title }}</h1>
+  <p>{{ article.published_at | date: '%B %d, %Y' }}{% if article.author %} — {{ article.author }}{% endif %}</p>
+  <div>{{ article.content }}</div>
+</div>

@@ -1,0 +1,19 @@
+{% comment %} Stub — real login template comes later. {% endcomment %}
+<div class="container">
+  <h1>Login</h1>
+  {% form 'customer_login' %}
+    {{ form.errors | default_errors }}
+    <input type="email" name="customer[email]" placeholder="Email" autocomplete="email" required>
+    <input type="password" name="customer[password]" placeholder="Password" autocomplete="current-password" required>
+    <button type="submit" class="btn-green">Sign In</button>
+  {% endform %}
+
+  <h2>Reset your password</h2>
+  {% form 'recover_customer_password' %}
+    {{ form.errors | default_errors }}
+    <input type="email" name="email" placeholder="Email" autocomplete="email" required>
+    <button type="submit" class="btn-green">Submit</button>
+  {% endform %}
+
+  <p><a href="{{ routes.account_register_url }}">Create an account</a></p>
+</div>

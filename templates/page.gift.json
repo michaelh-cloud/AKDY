@@ -1,0 +1,43 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-gift",
+      "blocks": {
+        "video-lowes": {
+          "type": "video",
+          "settings": { "label": "How to leave a review on LOWE'S", "url": "https://www.youtube.com/embed/qZKzgcV6A0M" }
+        },
+        "video-homedepot": {
+          "type": "video",
+          "settings": { "label": "How to leave a review on HomeDepot", "url": "https://www.youtube.com/embed/mpn0nWREtdE" }
+        },
+        "video-build": {
+          "type": "video",
+          "settings": { "label": "How to leave a review on Build.com", "url": "https://www.youtube.com/embed/-NCrADpL6RE" }
+        },
+        "f-order": { "type": "field", "settings": { "label": "Customer Order Number", "input_type": "text", "required": true } },
+        "f-product": { "type": "field", "settings": { "label": "What did you purchase?", "input_type": "select", "options": "Range Hood\nKitchen Sink\nKitchen Faucet\nBathtub\nShower Panel\nShower Head\nTub Filler\nBathroom Faucet\nBathroom Mirror", "required": true } },
+        "f-where": { "type": "field", "settings": { "label": "Where did you purchase?", "input_type": "text", "required": true } },
+        "f-nickname": { "type": "field", "settings": { "label": "Nickname used for review", "input_type": "text", "required": true } },
+        "f-firstname": { "type": "field", "settings": { "label": "First name", "input_type": "text", "required": true } },
+        "f-lastname": { "type": "field", "settings": { "label": "Last name", "input_type": "text", "required": true } },
+        "f-email": { "type": "field", "settings": { "label": "Email", "input_type": "text", "required": true } },
+        "f-phone": { "type": "field", "settings": { "label": "Phone", "input_type": "text", "required": false } },
+        "f-address": { "type": "field", "settings": { "label": "Address", "input_type": "text", "required": true } },
+        "f-city": { "type": "field", "settings": { "label": "City", "input_type": "text", "required": true } },
+        "f-state": { "type": "field", "settings": { "label": "State", "input_type": "state", "required": true } },
+        "f-zip": { "type": "field", "settings": { "label": "Zip/postal code", "input_type": "text", "required": true } },
+        "f-country": { "type": "field", "settings": { "label": "Country", "input_type": "country", "required": true } },
+        "f-review-url": { "type": "field", "settings": { "label": "Link to Review URL: http://", "input_type": "text", "required": false } }
+      },
+      "block_order": [
+        "video-lowes", "video-homedepot", "video-build",
+        "f-order", "f-product", "f-where", "f-nickname",
+        "f-firstname", "f-lastname", "f-email", "f-phone",
+        "f-address", "f-city", "f-state", "f-zip",
+        "f-country", "f-review-url"
+      ]
+    }
+  },
+  "order": ["main"]
+}

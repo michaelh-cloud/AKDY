@@ -1,0 +1,289 @@
+{% comment %}
+  Category browse page — one layout for support families, part-type pages,
+  and ordinary product categories (the audit found them structurally
+  identical). The child-category row renders only when a menu provides it:
+  the "Child category menu" setting, or automatically a menu whose handle
+  matches the collection's handle.
+{% endcomment %}
+
+{%- liquid
+  assign child_menu = section.settings.child_menu
+  if child_menu == blank
+    assign child_menu = linklists[collection.handle]
+  endif
+
+  assign sidebar_menu = section.settings.sidebar_menu
+
+  assign price_filter = nil
+  for filter in collection.filters
+    if filter.type == 'price_range'
+      assign price_filter = filter
+    endif
+  endfor
+
+  assign price_low = nil
+  assign price_high = nil
+  if price_filter
+    assign price_low = price_filter.min_value.value | default: 0
+    assign price_high = price_filter.max_value.value | default: price_filter.range_max
+  elsif collection.products_count > 0
+    assign sorted_prices = collection.products | map: 'price' | sort
+    assign price_low = sorted_prices | first
+    assign price_high = sorted_prices | last
+  endif
+-%}
+
+<div class="container">
+  {% render 'breadcrumbs' %}
+
+  <h1 class="cat-title">{{ collection.title }}</h1>
+
+  {%- if collection.description != blank -%}
+    {%- comment -%}
+      The final-sale notice on /support (and any other category copy) lives
+      in the collection description — 13px, centered, right under the title.
+    {%- endcomment -%}
+    <div class="cat-desc">{{ collection.description }}</div>
+  {%- endif -%}
+
+  {%- if child_menu != blank and child_menu.links.size > 0 -%}
+    {%- if section.settings.children_as_tiles -%}
+      {%- comment -%}
+        Image-tile variant for top-level landing pages (/support, /kitchen,
+        /bathroom): 144px photo above an uppercase label, 166px cells
+        wrapping centered, per the live /support capture. A link without a
+        findable image degrades to its label alone, exactly like Fireplace /
+        Kitchen Faucet / Bath Faucet on the live page. Everything is keyed
+        off the link URL and the linked collection's handle — NEVER the
+        display title: three support categories all display "Accessories"
+        (one with a trailing space).
+      {%- endcomment -%}
+      <nav class="cat-children cat-children--tiles" aria-label="Subcategories">
+        {%- for link in child_menu.links -%}
+          {%- liquid
+            assign tile_image = nil
+            if link.type == 'collection_link'
+              assign child_collection = link.object
+              if child_collection.image
+                assign tile_image = child_collection.image
+              elsif child_collection.products.first.featured_image
+                assign tile_image = child_collection.products.first.featured_image
+              endif
+            endif
+          -%}
+          <a class="cat-tile" href="{{ link.url }}">
+            {%- if tile_image -%}
+              {{ tile_image | image_url: width: 288 | image_tag: width: 144, height: 144, loading: 'lazy', class: 'cat-tile-img', alt: '' }}
+            {%- endif -%}
+            <span class="cat-tile-label">{{ link.title }}</span>
+          </a>
+        {%- endfor -%}
+      </nav>
+    {%- else -%}
+      <nav class="cat-children" aria-label="Subcategories">
+        {%- for link in child_menu.links -%}
+          <a href="{{ link.url }}">{{ link.title }}</a>
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
+  {%- endif -%}
+
+  <div class="browse">
+    <aside class="browse-sidebar">
+      {%- if sidebar_menu != blank and sidebar_menu.links.size > 0 -%}
+        <div class="facet-group">
+          <h2 class="facet-heading">{{ sidebar_menu.title }} <svg aria-hidden="true"><use href="#i-chevron-up"/></svg></h2>
+          <ul class="facet-links">
+            {%- for link in sidebar_menu.links limit: section.settings.sidebar_limit -%}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {%- endfor -%}
+          </ul>
+          {%- if sidebar_menu.links.size > section.settings.sidebar_limit -%}
+            <button type="button" class="see-more">See More</button>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%}
+        Search & Discovery facets. With none configured and no price data,
+        the sidebar degrades to just the category list above.
+      {%- endcomment -%}
+      {%- assign list_filters = collection.filters | where: 'type', 'list' -%}
+      {%- if list_filters.size > 0 or price_low != nil -%}
+        <h2 class="facet-label">{{ section.settings.filter_heading }}</h2>
+      {%- endif -%}
+
+      {%- for filter in list_filters -%}
+        <div class="facet-group">
+          <h3 class="facet-heading">{{ filter.label }}</h3>
+          <ul class="facet-links">
+            {%- for value in filter.values -%}
+              <li>
+                <a href="{% if value.active %}{{ value.url_to_remove }}{% else %}{{ value.url_to_add }}{% endif %}">
+                  {{ value.label }} ({{ value.count }})
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endfor -%}
+
+      {%- if price_low != nil -%}
+        <div class="facet-price">
+          <h3 class="facet-price-heading">{{ section.settings.price_heading }}</h3>
+          <div class="price-labels">
+            <span>{{ price_low | money }}</span>
+            <span>{{ price_high | money }}</span>
+          </div>
+          <div class="price-slider" aria-hidden="true"></div>
+        </div>
+      {%- endif -%}
+    </aside>
+
+    <div class="browse-results">
+      {%- paginate collection.products by section.settings.products_per_page -%}
+        <div class="results-toolbar">
+          <p class="results-count">{{ collection.products_count }} Products</p>
+
+          <select class="toolbar-select" aria-label="Results per page">
+            <option{% if section.settings.products_per_page == 12 %} selected{% endif %}>12 per page</option>
+            <option{% if section.settings.products_per_page == 24 %} selected{% endif %}>24 per page</option>
+            <option{% if section.settings.products_per_page == 48 %} selected{% endif %}>48 per page</option>
+          </select>
+
+          {%- comment -%}
+            The original's ?order=onlinecustomerprice:asc|desc maps to
+            Shopify's price-ascending / price-descending sort_by values.
+          {%- endcomment -%}
+          <select class="toolbar-select" data-navigate aria-label="Sort">
+            <option value="{{ collection.url }}"{% if collection.sort_by == blank or collection.sort_by == collection.default_sort_by %} selected{% endif %}>Relevance</option>
+            <option value="{{ collection.url }}?sort_by=price-ascending"{% if collection.sort_by == 'price-ascending' %} selected{% endif %}>Price, low to high</option>
+            <option value="{{ collection.url }}?sort_by=price-descending"{% if collection.sort_by == 'price-descending' %} selected{% endif %}>Price, high to low</option>
+          </select>
+
+          <div class="view-toggles">
+            <button type="button" aria-pressed="false"><svg aria-hidden="true"><use href="#i-view-list"/></svg><span class="sr-only">List view</span></button>
+            <button type="button" aria-pressed="false"><svg aria-hidden="true"><use href="#i-view-grid"/></svg><span class="sr-only">Grid view</span></button>
+            <button type="button" aria-pressed="true"><svg aria-hidden="true"><use href="#i-view-compact"/></svg><span class="sr-only">Compact view</span></button>
+          </div>
+        </div>
+
+        {%- if collection.products.size > 0 -%}
+          <ul class="product-grid">
+            {%- for product in collection.products -%}
+              <li>{% render 'product-card', product: product, show_compare: section.settings.show_compare %}</li>
+            {%- endfor -%}
+          </ul>
+        {%- else -%}
+          <div class="grid-empty">
+            <p>{{ section.settings.empty_message }}</p>
+          </div>
+        {%- endif -%}
+
+        {%- if paginate.next -%}
+          <a class="load-next" href="{{ paginate.next.url }}">
+            {{ section.settings.load_next_label }}
+            <svg aria-hidden="true"><use href="#i-chevron-down"/></svg>
+          </a>
+        {%- endif -%}
+      {%- endpaginate -%}
+    </div>
+  </div>
+</div>
+
+{%- if section.settings.show_compare -%}
+  <div class="compare-bar">
+    <div class="container compare-bar-inner">
+      <p>{{ section.settings.compare_hint }}</p>
+      <button type="button" class="compare-toggle"><svg aria-hidden="true"><use href="#i-chevron-up"/></svg><span class="sr-only">Collapse compare bar</span></button>
+      <button type="button" class="btn-green">{{ section.settings.compare_label }}</button>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Collection page",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 12,
+      "max": 48,
+      "step": 12,
+      "default": 24
+    },
+    {
+      "type": "link_list",
+      "id": "child_menu",
+      "label": "Child category menu",
+      "info": "Row of links under the title, for family pages. If unset, a menu whose handle matches the collection handle is used automatically; with neither, the row is hidden."
+    },
+    {
+      "type": "checkbox",
+      "id": "children_as_tiles",
+      "label": "Show child categories as image tiles",
+      "info": "For top-level landing pages (Support, Home & Kitchen, Bathroom): photo above an uppercase label instead of the plain text row. The photo is the linked collection's image, falling back to its first product's image.",
+      "default": false
+    },
+    {
+      "type": "link_list",
+      "id": "sidebar_menu",
+      "label": "Sidebar category menu",
+      "info": "The menu's own title is the group heading (e.g. SUPPORT or RANGE HOOD)."
+    },
+    {
+      "type": "range",
+      "id": "sidebar_limit",
+      "label": "Sidebar links before \"See More\"",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "checkbox",
+      "id": "show_compare",
+      "label": "Show compare checkboxes and compare bar",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "filter_heading",
+      "label": "Filter heading",
+      "default": "Filter"
+    },
+    {
+      "type": "text",
+      "id": "price_heading",
+      "label": "Price heading",
+      "default": "Price"
+    },
+    {
+      "type": "text",
+      "id": "empty_message",
+      "label": "Empty collection message",
+      "default": "There are no products in this category yet. Please check back soon."
+    },
+    {
+      "type": "text",
+      "id": "load_next_label",
+      "label": "Next page label",
+      "default": "Load Next Page"
+    },
+    {
+      "type": "text",
+      "id": "compare_hint",
+      "label": "Compare bar hint",
+      "default": "Select up to 4 items to compare."
+    },
+    {
+      "type": "text",
+      "id": "compare_label",
+      "label": "Compare button label",
+      "default": "Compare Now"
+    }
+  ]
+}
+{% endschema %}

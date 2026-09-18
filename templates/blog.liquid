@@ -1,0 +1,14 @@
+{% comment %} Stub — real blog template comes later. {% endcomment %}
+<div class="container">
+  <h1>{{ blog.title }}</h1>
+  {% paginate blog.articles by 12 %}
+    <ul>
+      {% for article in blog.articles %}
+        <li><a href="{{ article.url }}">{{ article.title }}</a> — {{ article.published_at | date: '%B %d, %Y' }}</li>
+      {% else %}
+        <li>No articles yet.</li>
+      {% endfor %}
+    </ul>
+    {{ paginate | default_pagination }}
+  {% endpaginate %}
+</div>

@@ -1,0 +1,91 @@
+{% comment %}
+  Warranty page — native rebuild of the live /warranty page (audit target:
+  live capture 2026-09-18). On the live site this page has NO AKDY-built
+  content of its own: the entire body below the breadcrumb is a single
+  NetSuite "External Lead Page" form (Online Lead Form, compid 4480470,
+  formid 15), embedded as a 100% x 1000px iframe:
+
+    https://4480470.extforms.netsuite.com/app/site/crm/externalleadpage.nl
+      ?compid=4480470&formid=15&h=AACffht_ahwg81YSO1rpG2Lwjqi00s7tyVg
+
+  That form is the live warranty-registration workflow (first/last name,
+  email, phone, address, city, state, zip, country, PID, order number,
+  purchase date, "where did you purchase?" — all POSTing straight into
+  AKDY's NetSuite CRM as a lead). Keeping the same iframe here is
+  deliberate: it is the fastest, lowest-risk migration (the form keeps
+  working exactly as it does today, same backend, zero data-migration
+  decision needed) and gives pixel-for-pixel parity with the live page.
+
+  The iframe URL is a section setting, not hardcoded, so it can be swapped
+  without a code change if NetSuite ever reissues the form's `h` token or
+  Min wants to point it at a different form.
+
+  If a native Shopify-side form is ever wanted instead (no NetSuite call),
+  the full field list to rebuild is documented in
+  docs/policy-page-content/warranty-form-fields.md — pulled directly from
+  the live NetSuite form so nothing has to be re-captured.
+{% endcomment %}
+
+<div class="container">
+  {% render 'breadcrumbs' %}
+
+  <div class="warranty">
+    <h1 class="page-title sr-only">{{ page.title }}</h1>
+
+    {%- if section.settings.intro != blank -%}
+      <div class="warranty-intro">{{ section.settings.intro }}</div>
+    {%- endif -%}
+
+    {%- if section.settings.form_url != blank -%}
+      <iframe
+        class="warranty-form-frame"
+        src="{{ section.settings.form_url }}"
+        title="{{ section.settings.form_title | default: 'AKDY Warranty Registration' }}"
+        width="100%"
+        height="{{ section.settings.form_height | default: 1000 }}"
+        loading="lazy">
+      </iframe>
+    {%- else -%}
+      <p class="warranty-form-missing" data-todo="warranty-form-url">Warranty registration form is not configured yet.</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Warranty",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "Intro text",
+      "info": "Optional AKDY-side copy above the form. The live page has none — the NetSuite form has its own banner/intro baked in — so this is blank by default."
+    },
+    {
+      "type": "url",
+      "id": "form_url",
+      "label": "Warranty form embed URL",
+      "default": "https://4480470.extforms.netsuite.com/app/site/crm/externalleadpage.nl?compid=4480470&formid=15&h=AACffht_ahwg81YSO1rpG2Lwjqi00s7tyVg",
+      "info": "The live NetSuite lead-form URL. Same backend as today — swap this if the form is ever rebuilt or the link token changes."
+    },
+    {
+      "type": "text",
+      "id": "form_title",
+      "label": "Iframe accessible title",
+      "default": "AKDY Warranty Registration"
+    },
+    {
+      "type": "number",
+      "id": "form_height",
+      "label": "Iframe height (px)",
+      "default": 1000,
+      "info": "Matches the live embed's fixed height (1000px)."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Warranty"
+    }
+  ]
+}
+{% endschema %}

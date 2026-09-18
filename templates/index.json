@@ -1,0 +1,153 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-carousel",
+      "blocks": {
+        "slide-faucet": {
+          "type": "slide",
+          "settings": {
+            "image_url": "https://www.akdyusa.com/scs/assets/Carousel7.jpg",
+            "alt": "Spring-neck faucet over a stainless steel workstation sink",
+            "eyebrow": "Elegant and Functional",
+            "heading": "Spring-neck Faucet and High-quality Sink combo",
+            "cta_label": "Explore More"
+          }
+        },
+        "slide-shower-panel": {
+          "type": "slide",
+          "settings": {
+            "image_url": "https://www.akdyusa.com/scs/assets/Carousel5.jpg",
+            "alt": "AKDY shower panel system SP0120",
+            "eyebrow": "Luxuriously & Versatile",
+            "heading": "Featured Shower Panel System SP0120",
+            "cta_label": "Shop Now"
+          }
+        },
+        "slide-kitchen": {
+          "type": "slide",
+          "settings": {
+            "image_url": "https://www.akdyusa.com/scs/assets/Carousel1.jpg",
+            "alt": "AKDY kitchen products",
+            "eyebrow": "Exquisite Kitchen, Tasty Life",
+            "heading": "Simple, Stylish, Quality",
+            "cta_label": "View Now"
+          }
+        },
+        "slide-freestanding": {
+          "type": "slide",
+          "settings": {
+            "image_url": "https://www.akdyusa.com/scs/assets/Carousel4.jpg",
+            "alt": "Freestanding bathtub with floor-mounted tub filler",
+            "eyebrow": "Sleek, Clean & Freestanding",
+            "heading": "Bring you Extraordinary Enjoyment",
+            "cta_label": "View Now"
+          }
+        },
+        "slide-infographic": {
+          "type": "slide",
+          "settings": {
+            "image_url": "https://www.akdyusa.com/scs/assets/Carousel10.jpg",
+            "alt": "Tub filler TF0042 feature infographic"
+          }
+        }
+      },
+      "block_order": [
+        "slide-faucet",
+        "slide-shower-panel",
+        "slide-kitchen",
+        "slide-freestanding",
+        "slide-infographic"
+      ],
+      "settings": {}
+    },
+    "promo": {
+      "type": "promo-band",
+      "settings": {
+        "image_url": "https://www.akdyusa.com/scs/assets/bathtub_gif_collection.gif",
+        "alt": "AKDY bathtub pattern and style options",
+        "heading": "AKDY Bathtub Collection",
+        "body": "<p>When it comes to our customer's satisfaction, there's no room for compromise. That's why we have chosen to work only with top quality materials and verified suppliers, which are guaranteed to deliver to our high expectations.</p><p>Our AKDY freestanding bathtub comes with an ultra-elegant, modern shape suitable for all types of bathrooms, being made from heavy-duty acrylic and reinforced fiberglass for extra longevity. With a comfortable curved back and perfect soaking depth, you'll be able to relax your body and mind like a full SPA experience!</p>",
+        "cta_label": "Discover More"
+      }
+    },
+    "info": {
+      "type": "info-grid",
+      "blocks": {
+        "tile-rangehood": {
+          "type": "tile",
+          "settings": {
+            "image_url": "https://www.akdyusa.com/HomePage_IMG/Info-Blocks-1.jpg",
+            "image_width": 630,
+            "image_height": 300,
+            "alt": "Range hoods",
+            "wide": true
+          }
+        },
+        "tile-shower-panel": {
+          "type": "tile",
+          "settings": {
+            "image_url": "https://www.akdyusa.com/HomePage_IMG/Info-Blocks-2.jpg",
+            "image_width": 310,
+            "image_height": 300,
+            "alt": "Shower panel systems",
+            "wide": false
+          }
+        },
+        "tile-shower-head": {
+          "type": "tile",
+          "settings": {
+            "image_url": "https://www.akdyusa.com/HomePage_IMG/Info-Blocks-3.jpg",
+            "image_width": 310,
+            "image_height": 300,
+            "alt": "Shower heads",
+            "wide": false
+          }
+        },
+        "tile-tub-filler": {
+          "type": "tile",
+          "settings": {
+            "image_url": "https://www.akdyusa.com/HomePage_IMG/Info-Blocks-4.jpg",
+            "image_width": 310,
+            "image_height": 300,
+            "alt": "Tub fillers",
+            "wide": false
+          }
+        },
+        "tile-bathtub": {
+          "type": "tile",
+          "settings": {
+            "image_url": "https://www.akdyusa.com/HomePage_IMG/Info-Blocks-5.jpg",
+            "image_width": 326,
+            "image_height": 316,
+            "alt": "Bathtubs",
+            "wide": false
+          }
+        },
+        "tile-kitchen-sink": {
+          "type": "tile",
+          "settings": {
+            "image_url": "https://www.akdyusa.com/HomePage_IMG/Info-Blocks-6.jpg",
+            "image_width": 630,
+            "image_height": 300,
+            "alt": "Kitchen sinks",
+            "wide": true
+          }
+        }
+      },
+      "block_order": [
+        "tile-rangehood",
+        "tile-shower-panel",
+        "tile-shower-head",
+        "tile-tub-filler",
+        "tile-bathtub",
+        "tile-kitchen-sink"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "hero",
+    "promo",
+    "info"
+  ]
+}

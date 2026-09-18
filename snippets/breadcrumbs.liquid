@@ -1,0 +1,108 @@
+{% comment %}
+  Breadcrumb trail, matching the audit's "Home > Support > Range Hood > …"
+  format. Separators are real ">" glyphs like the original.
+
+  The audit found trail depth varies from 1 to 4 levels — 14 support parts
+  sit in families with no part-type child, e.g.:
+    Home > Support > Shower Panel > Bracket > PSPMB001   (full)
+    Home > Support > PBFSP001-Bath Faucet Special Parts  (family missing)
+    Home > PSPDP003-Shower Panel Display                 (everything missing)
+
+  Shopify has no category hierarchy, so ancestors come from a nav menu with
+  handle "breadcrumbs", nested to mirror the category tree (up to Shopify's
+  three link levels): Support > Shower Panel > Bracket. The current
+  collection is looked up in that tree BY URL — never by display name,
+  because three support categories all display "Accessories" — and the path
+  to it becomes the trail. Whatever levels are missing are simply skipped:
+  no menu, or a collection that isn't in it, degrades to Home > collection;
+  a product with no collection degrades to Home > product.
+{% endcomment %}
+{%- liquid
+  assign crumb_collection = nil
+  if template.name == 'collection'
+    assign crumb_collection = collection
+  elsif template.name == 'product'
+    if collection
+      assign crumb_collection = collection
+    elsif product.collections.first
+      assign crumb_collection = product.collections.first
+    endif
+  endif
+
+  assign a1 = nil
+  assign a2 = nil
+  assign a3 = nil
+  assign tree = linklists['breadcrumbs']
+  if crumb_collection and tree != blank and tree.links.size > 0
+    assign target_url = crumb_collection.url
+    for l1 in tree.links
+      if l1.url == target_url
+        assign a1 = l1
+        break
+      endif
+      for l2 in l1.links
+        if l2.url == target_url
+          assign a1 = l1
+          assign a2 = l2
+          break
+        endif
+        for l3 in l2.links
+          if l3.url == target_url
+            assign a1 = l1
+            assign a2 = l2
+            assign a3 = l3
+            break
+          endif
+        endfor
+        if a1
+          break
+        endif
+      endfor
+      if a1
+        break
+      endif
+    endfor
+  endif
+-%}
+<nav class="breadcrumbs" aria-label="Breadcrumbs">
+  <a href="{{ routes.root_url }}">Home</a>
+  {%- if a1 -%}
+    {%- comment -%} Ancestor chain; the deepest found node IS the collection. {%- endcomment -%}
+    {%- if a2 -%}
+      <span class="crumb-sep">&gt;</span>
+      <a href="{{ a1.url }}">{{ a1.title }}</a>
+    {%- endif -%}
+    {%- if a3 -%}
+      <span class="crumb-sep">&gt;</span>
+      <a href="{{ a2.url }}">{{ a2.title }}</a>
+    {%- endif -%}
+    <span class="crumb-sep">&gt;</span>
+    {%- if template.name == 'collection' -%}
+      <span class="crumb-current">{{ crumb_collection.title }}</span>
+    {%- else -%}
+      <a href="{{ crumb_collection.url }}">{{ crumb_collection.title }}</a>
+    {%- endif -%}
+  {%- elsif crumb_collection -%}
+    <span class="crumb-sep">&gt;</span>
+    {%- if template.name == 'collection' -%}
+      <span class="crumb-current">{{ crumb_collection.title }}</span>
+    {%- else -%}
+      <a href="{{ crumb_collection.url }}">{{ crumb_collection.title }}</a>
+    {%- endif -%}
+  {%- endif -%}
+  {%- if template.name == 'product' -%}
+    <span class="crumb-sep">&gt;</span>
+    <span class="crumb-current">{{ product.title }}</span>
+  {%- elsif template.name == 'page' -%}
+    {%- comment -%}
+      The live crumbs use each page's DOCUMENT title, not its display
+      title — "Home > FAQs | AKDY Imports" on /faqs (also suffixed on
+      shipping/return/about; privacy and terms are unsuffixed; contact
+      and gift plain). Reproduced by preferring the page's SEO title
+      (metafields.global.title_tag, the admin "Page title" SEO field)
+      over page.title, so it matches whatever is typed there.
+    {%- endcomment -%}
+    <span class="crumb-sep">&gt;</span>
+    <span class="crumb-current">{{ page.metafields.global.title_tag | default: page.title }}</span>
+  {%- endif -%}
+</nav>

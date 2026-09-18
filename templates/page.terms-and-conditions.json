@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "banner_asset": "page-banner-terms-and-conditions.jpg"
+      }
+    }
+  },
+  "order": ["main"]
+}
