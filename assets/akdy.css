@@ -19,63 +19,52 @@
 :root {
   /* --- type ------------------------------------------------------------- */
   --font-sans: "PT Sans", Helvetica, Arial, sans-serif;
-  /* Display headings use the Narrow cut — measured ~0.81x the advance width
-     of PT Sans in the screenshot; without it the hero headline wraps.
-     No italic cut exists; the browser synthesizes the oblique, as on the
-     live site. */
   --font-narrow: "PT Sans Narrow", "Arial Narrow", var(--font-sans);
-  --h1-size: 40px;            /* promo heading — smaller than h2, site quirk */
-  --h2-size: 50px;            /* hero slide headlines — larger than h1 */
-  --eyebrow-size: 40px;       /* hero italic eyebrow line */
+  --h1-size: 40px;
+  --h2-size: 50px;
+  --eyebrow-size: 40px;
   --body-size: 15px;
   --small-size: 13px;
   --nav-size: 14px;
 
   /* --- color ------------------------------------------------------------ */
-  --green: #aacf45;           /* brand green: top bar, CTAs, copyright bar */
-  --green-hover: #9bbd3a;     /* darkened green for hover states */
-  --ink: #333333;             /* nav, notices, footer headings */
-  --ink-heading: #2b2b2b;     /* large headings */
-  --ink-soft: #666666;        /* body copy, footer links */
-  --ink-faint: #999999;       /* utility greeting, social icons, inactive dots */
+  --green: #aacf45;
+  --green-hover: #9bbd3a;
+  --ink: #333333;
+  --ink-heading: #2b2b2b;
+  --ink-soft: #666666;
+  --ink-faint: #999999;
   --bg: #ffffff;
-  --bg-panel: #f5f5f5;        /* promo right panel */
-  --bg-footer: #eeeeee;       /* footer background */
-  --border: #dddddd;          /* header dividers */
+  --bg-panel: #f5f5f5;
+  --bg-footer: #eeeeee;
+  --border: #dddddd;
   --input-border: #cccccc;
   --white: #ffffff;
 
   /* --- layout ----------------------------------------------------------- */
   --container-max: 1600px;
-  --gutter: 15px;             /* Bootstrap 3 container padding */
-  --grid-gap: 8px;            /* info block grid gap */
-  --topbar-h: 22px;           /* thin green bar at the very top */
+  --gutter: 15px;
+  --grid-gap: 8px;
+  --topbar-h: 22px;
 
-  /* --- category / product pages (colors sampled from the audit
-         screenshots: support pages + part-cf0015) ------------------------- */
-  --ink-dark: #3a3a3a;        /* dark buttons, qty border, tab active, handles */
-  --star: #d3d3d3;            /* empty rating stars */
-  --danger: #c01a29;          /* Out Of Stock text + icon */
+  --ink-dark: #3a3a3a;
+  --star: #d3d3d3;
+  --danger: #c01a29;
   --danger-bg: #fdf0f2;
   --danger-border: #f1ced1;
-  --stock-green: #097839;     /* IN STOCK badge text + check */
+  --stock-green: #097839;
   --stock-green-bg: #e7faef;
-  --warning-red: #ff0000;     /* leading warning line in part descriptions */
-  --maroon: #8b1133;          /* policy/FAQ heading accent (rgb(139,17,51) on the live CMS pages) */
-  --placeholder-bg: #f2f2f2;  /* "Image not available" tile */
+  --warning-red: #ff0000;
+  --maroon: #8b1133;
+  --placeholder-bg: #f2f2f2;
   --placeholder-ink: #c9c9c9;
 
-  /* --- components ------------------------------------------------------- */
-  --hero-overlay: rgba(255, 255, 255, 0.75);  /* translucent caption panel */
-  --hero-caption-w: 66.6%;    /* caption panel width at desktop */
+  --hero-overlay: rgba(255, 255, 255, 0.75);
+  --hero-caption-w: 66.6%;
   --btn-pad: 13px 30px;
   --btn-tracking: 2px;
   --dot-size: 11px;
 }
-
-/* ==========================================================================
-   Reset / base
-   ========================================================================== */
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -100,8 +89,6 @@ button {
   border: none;
 }
 
-/* Bootstrap-3-style container: 1600px max, 15px gutters, unconstrained
-   below 768px (per the audit). */
 .container {
   max-width: var(--container-max);
   margin: 0 auto;
@@ -109,7 +96,6 @@ button {
   padding-right: var(--gutter);
 }
 
-/* Green CTA button — identical treatment in hero, promo, footer subscribe. */
 .btn-green {
   display: inline-block;
   background: var(--green);
@@ -119,13 +105,22 @@ button {
   text-transform: uppercase;
   padding: var(--btn-pad);
   border: 0;
-  border-radius: 0;                 /* original buttons are square-cornered */
+  border-radius: 0;
   transition: background 0.15s ease;
 }
 .btn-green:hover,
 .btn-green:focus { background: var(--green-hover); }
 
-/* Screen-reader-only helper for icon links and carousel labels. */
+/* CTA rendered as a plain span (no link configured yet) — keep the same
+   look but drop every interactive cue, since span:hover above would
+   otherwise still make it read as clickable. */
+span.btn-green {
+  cursor: default;
+  opacity: 0.6;
+}
+span.btn-green:hover,
+span.btn-green:focus { background: var(--green); }
+
 .sr-only {
   position: absolute;
   width: 1px; height: 1px;
@@ -136,14 +131,8 @@ button {
   border: 0;
 }
 
-/* ==========================================================================
-   Global header  (reused on every later page)
-   ========================================================================== */
-
-/* Thin green bar across the very top */
 .topbar { height: var(--topbar-h); background: var(--green); }
 
-/* Three-line centered shipping notice, all bold */
 .shipping-notice {
   text-align: center;
   font-weight: 700;
@@ -153,7 +142,6 @@ button {
 }
 .shipping-notice p { margin: 0; line-height: 1.5; }
 
-/* Right-aligned utility row: greeting, Login or Register, Quick Order */
 .utility-row {
   display: flex;
   justify-content: flex-end;
@@ -166,7 +154,6 @@ button {
 .utility-row a { font-style: italic; color: #555; }
 .utility-row a:hover { color: var(--green-hover); }
 
-/* Main bar: logo, nav, social icons, search, cart */
 .main-bar {
   display: flex;
   align-items: center;
@@ -194,20 +181,11 @@ button {
 .site-nav a:hover,
 .site-nav a:focus { color: var(--green-hover); }
 
-/* --- nav dropdowns (rendered only when a menu with children is assigned;
-       the hardcoded fallback nav has no .nav-item/.nav-panel markup) ------ */
-
-/* Mobile-first: panels closed until their li is .open (hamburger accordion).
-   Desktop hover behaviour is layered on in the >=768px block below.
-   Scoped under .site-nav so this outranks the `.site-nav ul` flex rule
-   above, which would otherwise re-display the panel ULs. */
 .site-nav .nav-panel,
 .site-nav .nav-sub {
   display: none;
   list-style: none;
 }
-/* Hidden until the desktop block sizes and positions it — on mobile the
-   expandable-section chevron button already marks items with children. */
 .nav-flyout-chevron { display: none; }
 .site-nav li.open > .nav-panel,
 .site-nav li.open > .nav-sub { display: block; }
@@ -228,12 +206,6 @@ button {
 @media (min-width: 768px) {
   .nav-item { position: relative; }
 
-  /* White dropdown panel, per the live capture: 180px wide, no border,
-     0 6px 12px rgba(0,0,0,.176) shadow, sitting at the header's bottom
-     edge (the li's box plus the main-bar's 14px bottom padding). The
-     ::before bridge keeps the li hovered while the pointer crosses that
-     14px gap. Left offset -4px aligns panel text (20px item padding)
-     with the nav link text (16px link padding), as on the live site. */
   .nav-panel {
     position: absolute;
     top: calc(100% + 14px);
@@ -255,8 +227,6 @@ button {
   .nav-item:hover > .nav-panel,
   .nav-item:focus-within > .nav-panel { display: block; }
 
-  /* Panel items: 14px normal-weight capitalize, left-aligned — overrides
-     the uppercase bold top-level nav link styling. */
   .nav-panel a {
     display: block;
     position: relative;
@@ -272,7 +242,6 @@ button {
   .nav-panel a:hover,
   .nav-panel a:focus { color: var(--green-hover); }
 
-  /* Light-gray right chevron on any panel item with its own children */
   .nav-flyout-chevron {
     display: block;
     position: absolute;
@@ -284,9 +253,6 @@ button {
     fill: #bbb;
   }
 
-  /* Third level: flyout to the right, top-aligned with its parent item,
-     overlapping the parent panel by 27px (live: 153px offset on a 180px
-     panel). Same panel treatment. */
   .nav-sub-item { position: relative; }
   .nav-sub {
     position: absolute;
@@ -300,12 +266,9 @@ button {
   .nav-sub-item:hover > .nav-sub,
   .nav-sub-item:focus-within > .nav-sub { display: block; }
 
-  /* Hover state never uses the .open class on desktop; make sure a
-     stale mobile toggle can't pin a panel open across a resize. */
   .submenu-toggle { display: none; }
 }
 
-/* Social icons + search + cart, pushed to the right edge */
 .header-icons {
   margin-left: auto;
   display: flex;
@@ -326,7 +289,6 @@ button {
 .header-icons .icon-link:focus { color: var(--ink); }
 .header-icons .icon-link svg { width: 16px; height: 16px; fill: currentColor; }
 
-/* Thin vertical dividers before the search icon and before the cart */
 .header-icons .divider {
   width: 1px;
   height: 26px;
@@ -341,7 +303,6 @@ button {
   margin-left: 5px;
 }
 
-/* Hamburger — only shown below 768px (the original SC theme collapses too) */
 .nav-toggle {
   display: none;
   padding: 8px 10px;
@@ -349,14 +310,9 @@ button {
 }
 .nav-toggle svg { width: 22px; height: 22px; fill: currentColor; }
 
-/* ==========================================================================
-   Hero carousel
-   ========================================================================== */
-
 .hero {
   position: relative;
   overflow: hidden;
-  /* Slides are 1342x600 rendered full-bleed; keep their aspect ratio */
   aspect-ratio: 1342 / 600;
   background: #f0f0f0;
 }
@@ -364,7 +320,6 @@ button {
 .hero-track {
   display: flex;
   height: 100%;
-  /* transform is driven by akdy.js; transition toggled off for loop snaps */
   transition: transform 0.6s ease;
 }
 
@@ -373,14 +328,14 @@ button {
   flex: 0 0 100%;
   height: 100%;
 }
-.hero-slide > a { display: block; height: 100%; }
+.hero-slide > a,
+.hero-slide > .hero-slide-media { display: block; height: 100%; }
 .hero-slide img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* Translucent white caption panel over the left of the image */
 .hero-caption {
   position: absolute;
   left: 0;
@@ -398,8 +353,6 @@ button {
   color: #3a3a3a;
   line-height: 1.15;
 }
-/* The slide headlines are the page's h2s — 50px, larger than the h1.
-   That is the live site's quirk; reproduced deliberately. */
 .hero-caption h2 {
   font-family: var(--font-narrow);
   font-size: var(--h2-size);
@@ -409,7 +362,6 @@ button {
   margin: 8px 0 30px;
 }
 
-/* Dot navigation, bottom center, overlapping the image */
 .hero-dots {
   position: absolute;
   left: 0;
@@ -429,11 +381,7 @@ button {
 }
 .hero-dots button[aria-current="true"] { background: var(--white); }
 
-/* ==========================================================================
-   Promo band  (bathtub GIF + AKDY BATHTUB COLLECTION panel)
-   ========================================================================== */
-
-.promo { margin-top: 215px; }   /* large white gap below hero, per screenshot */
+.promo { margin-top: 215px; }
 
 .promo-inner {
   display: flex;
@@ -442,8 +390,6 @@ button {
 .promo-media,
 .promo-panel { flex: 1 1 50%; min-width: 0; }
 
-/* The animated GIF already contains the "MORE PATTERNS" / "MORE STYLES"
-   labels inside its frames — no HTML label is added beside it. */
 .promo-media img { width: 100%; height: auto; }
 
 .promo-panel {
@@ -455,7 +401,6 @@ button {
   padding: 105px 40px 60px;
 }
 
-/* The page h1 — 40px, SMALLER than the 50px h2s. Site quirk, reproduced. */
 .promo-panel h1 {
   font-family: var(--font-narrow);
   font-size: var(--h1-size);
@@ -468,8 +413,6 @@ button {
   line-height: 1.15;
 }
 
-/* Underline flourish: a thin rule with two "\" strokes crossing it,
-   right of center — matches the screenshot detail. */
 .rule-flourish {
   position: relative;
   width: 380px;
@@ -486,7 +429,7 @@ button {
   width: 2px;
   height: 44px;
   background: #555;
-  transform: rotate(-45deg);   /* "\" — top-left to bottom-right */
+  transform: rotate(-45deg);
 }
 .rule-flourish::before { left: 72%; }
 .rule-flourish::after  { left: 79%; }
@@ -502,10 +445,6 @@ button {
 
 .promo-panel .btn-green { margin: 48px auto 0; }
 
-/* ==========================================================================
-   Info block grid  (six image tiles, four-column grid)
-   ========================================================================== */
-
 .info-blocks { margin-top: 30px; }
 
 .info-grid {
@@ -513,21 +452,15 @@ button {
   grid-template-columns: repeat(4, 1fr);
   gap: var(--grid-gap);
 }
-/* Natural sizes drive the layout: tiles 1 and 6 are 630x300 and span two
-   columns; the other four are roughly square and span one.
-   Row 1: wide-narrow-narrow.  Row 2: narrow-narrow-wide. */
 .info-grid .tile-wide { grid-column: span 2; }
 
-.info-grid a { display: block; }
+.info-grid a,
+.info-grid .tile-media { display: block; }
 .info-grid img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-
-/* ==========================================================================
-   Global footer  (reused on every later page)
-   ========================================================================== */
 
 .site-footer {
   background: var(--bg-footer);
@@ -540,7 +473,6 @@ button {
   flex-wrap: wrap;
   gap: 30px;
 }
-/* Bases + three 30px gaps must stay under 100% or the last column wraps. */
 .footer-brand   { flex: 0 1 18%; }
 .footer-help    { flex: 0 1 25%; }
 .footer-shop    { flex: 0 1 25%; }
@@ -597,7 +529,6 @@ button {
 }
 .footer-signup .btn-green { padding: 10px 22px; letter-spacing: 1px; }
 
-/* Green copyright bar with the Rancho Cucamonga address */
 .copyright {
   background: var(--green);
   color: var(--white);
@@ -605,11 +536,6 @@ button {
   padding: 10px 0;
 }
 
-/* ==========================================================================
-   Responsive — Bootstrap 3 breakpoints, mobile-first overrides
-   ========================================================================== */
-
-/* --- below 768px ("xs"): container unconstrained, nav collapses ---------- */
 @media (max-width: 767px) {
   .shipping-notice { font-size: 12px; }
   .utility-row { justify-content: center; gap: 14px; }
@@ -620,7 +546,6 @@ button {
 
   .nav-toggle { display: block; order: 3; }
 
-  /* Collapsed nav: full-width dropdown, toggled by the hamburger */
   .site-nav {
     display: none;
     width: 100%;
@@ -631,12 +556,8 @@ button {
   .site-nav a { padding: 10px 4px; border-top: 1px solid var(--border); }
 
   .header-icons { order: 2; }
-  /* Hide the social row in the collapsed header to keep the bar on one line;
-     social links remain available in the footer. */
   .header-icons .social { display: none; }
 
-  /* Dropdown-capable items fold into the hamburger as expandable sections:
-     the chevron button toggles, children indent, third level indents more. */
   .site-nav li { position: relative; }
   .submenu-toggle {
     display: flex;
@@ -649,7 +570,6 @@ button {
   .nav-panel a { padding-left: 20px; }
   .nav-sub a { padding-left: 36px; }
 
-  /* Hero: image stays at its natural ratio, so the caption shrinks a lot */
   .hero-caption { width: 80%; padding: 12px 14px; }
   .hero-caption .eyebrow { font-size: 15px; }
   .hero-caption h2 { font-size: 17px; margin: 2px 0 8px; }
@@ -671,7 +591,6 @@ button {
   .site-footer { margin-top: 40px; padding: 36px 0 44px; }
 }
 
-/* --- 768px to 991px ("sm") ----------------------------------------------- */
 @media (min-width: 768px) and (max-width: 991px) {
   .hero-caption { padding: 24px 24px 24px 34px; }
   .hero-caption .eyebrow { font-size: 24px; }
@@ -689,7 +608,6 @@ button {
   .footer-signup { flex: 1 1 40%; }
 }
 
-/* --- 992px to 1199px ("md") ---------------------------------------------- */
 @media (min-width: 992px) and (max-width: 1199px) {
   .hero-caption { padding: 32px 32px 32px 48px; }
   .hero-caption .eyebrow { font-size: 30px; }
@@ -699,11 +617,6 @@ button {
   .promo-panel { padding: 70px 30px 50px; }
   .promo-panel h1 { font-size: 34px; }
 }
-
-/* ==========================================================================
-   Category browse pages  (support family, part-type, and later the ordinary
-   kitchen/bathroom categories — one shared layout, per the audit)
-   ========================================================================== */
 
 .breadcrumbs {
   display: flex;
@@ -719,7 +632,6 @@ button {
 .breadcrumbs .crumb-sep { color: #999; }
 .breadcrumbs .crumb-current { color: #777; }
 
-/* Centered italic category title — narrow cut, like the home page h1 */
 .cat-title {
   font-family: var(--font-narrow);
   font-size: 40px;
@@ -730,9 +642,6 @@ button {
   margin: 10px 0 0;
 }
 
-/* Category description — the final-sale notice on /support and any other
-   collection copy. 13px centered, ~10px under the title (live measurement:
-   13.05px #3a3a3a, 10px gap at the 1455px capture). */
 .cat-desc {
   font-size: 13px;
   text-align: center;
@@ -742,9 +651,6 @@ button {
 }
 .cat-desc p { margin: 0; }
 
-/* Child-category row on family pages: evenly pitched centered columns.
-   184px basis reproduces the measured ~184px pitch at the 1455px capture;
-   long names ("RANGE HOOD CHIMNEY") wrap inside their column. */
 .cat-children {
   display: flex;
   flex-wrap: wrap;
@@ -763,19 +669,15 @@ button {
 }
 .cat-children a:hover { color: var(--green-hover); }
 
-/* Image-tile variant for top-level landing pages (/support, /kitchen,
-   /bathroom). Live measurements at the 1455px capture: 166px cells with
-   10px side / 40px bottom margins, 144px square photo, 18px uppercase
-   label, rows wrapping centered. Max-width caps the row at seven tiles. */
 .cat-children--tiles {
-  max-width: 1330px;              /* 7 x 186px pitch */
+  max-width: 1330px;
   margin: 45px auto 0;
 }
 .cat-children--tiles .cat-tile {
   flex: 0 0 166px;
   margin: 0 10px 40px;
   text-align: center;
-  font-size: 18px;                /* label size — overrides the 13px row */
+  font-size: 18px;
   text-transform: uppercase;
   letter-spacing: normal;
   color: #0f0f0f;
@@ -786,12 +688,11 @@ button {
   width: 144px;
   height: 144px;
   object-fit: contain;
-  display: block;              /* not inline: kills the baseline gap below */
+  display: block;
   margin: 0 auto 6px;
 }
 .cat-tile-label { display: block; }
 
-/* Two-column browse area: fixed 200px facet sidebar + fluid results */
 .browse {
   display: flex;
   align-items: flex-start;
@@ -804,8 +705,6 @@ button {
   min-width: 0;
   border-top: 1px solid var(--border);
 }
-
-/* --- facet sidebar ------------------------------------------------------- */
 
 .facet-group { margin-bottom: 36px; }
 .facet-heading {
@@ -863,8 +762,6 @@ button {
   color: var(--ink);
   margin-top: 26px;
 }
-/* Static rendering of the range control: green track, dark triangular
-   handles pointing inward at both ends (matches the SC Posh slider). */
 .price-slider {
   position: relative;
   height: 5px;
@@ -883,8 +780,6 @@ button {
 }
 .price-slider::before { left: 0;  border-left: 10px solid var(--ink-dark); }
 .price-slider::after  { right: 0; border-right: 10px solid var(--ink-dark); }
-
-/* --- results toolbar ------------------------------------------------------ */
 
 .results-toolbar {
   display: flex;
@@ -916,8 +811,6 @@ button {
 .view-toggles button[aria-pressed="true"],
 .view-toggles button:hover { color: var(--ink); }
 
-/* --- product grid --------------------------------------------------------- */
-
 .product-grid {
   list-style: none;
   display: grid;
@@ -936,8 +829,6 @@ button {
   object-fit: contain;
 }
 
-/* "Image not available" tile — most parts have no photo; this is the
-   catalogue's normal state, so it is styled deliberately, not as an error. */
 .img-placeholder {
   width: 100%;
   height: 100%;
@@ -966,8 +857,6 @@ button {
 .card-title:hover { color: var(--green-hover); }
 .card-price { font-size: 14px; color: var(--ink); margin-top: 4px; }
 
-/* SVG stars — the ★ glyph falls out of PT Sans and renders inconsistently
-   across fallback fonts, so the stars are drawn with the icon set. */
 .stars {
   display: flex;
   justify-content: center;
@@ -977,7 +866,6 @@ button {
 }
 .stars svg { width: 13px; height: 13px; fill: currentColor; }
 
-/* flex (not inline-flex) so an Out Of Stock badge stacks under it */
 .compare {
   display: flex;
   justify-content: center;
@@ -1009,8 +897,6 @@ button {
   color: var(--ink-soft);
 }
 
-/* --- pagination + compare bar --------------------------------------------- */
-
 .load-next {
   display: block;
   text-align: center;
@@ -1038,10 +924,6 @@ button {
 .compare-toggle svg { width: 16px; height: 16px; fill: currentColor; }
 .compare-bar .btn-green { font-size: 13px; padding: 10px 68px; margin-left: 12px; }
 
-/* ==========================================================================
-   Product detail page  (part-cf0015 layout)
-   ========================================================================== */
-
 .pdp {
   display: flex;
   align-items: flex-start;
@@ -1049,7 +931,6 @@ button {
   margin-top: 26px;
 }
 .pdp-gallery { flex: 0 0 50%; min-width: 0; }
-/* 555px square, offset 68px from the column edge, per the 1455px capture */
 .pdp-media {
   max-width: 555px;
   aspect-ratio: 1 / 1;
@@ -1133,7 +1014,6 @@ button {
 .share-row a:hover { color: var(--ink); }
 .share-row svg { width: 16px; height: 16px; fill: currentColor; }
 
-/* Tab strip underline spans only the tabs themselves (inline-flex) */
 .pdp-tabs {
   display: inline-flex;
   gap: 26px;
@@ -1158,12 +1038,8 @@ button {
 .pdp-desc p + p { margin-top: 8px; }
 .pdp-desc ul { padding-left: 20px; }
 .pdp-desc li { margin-bottom: 6px; }
-/* Leading "Please use our … tool" / "Please note …" compatibility warning */
 .pdp-desc .desc-warning { color: var(--warning-red); }
 
-/* --- ratings & reviews ---------------------------------------------------- */
-
-/* Inset like the original (rules run 258..1180px at the 1455 capture) */
 .reviews-block { max-width: 922px; margin: 90px auto 60px; }
 .reviews-heading {
   display: flex;
@@ -1201,23 +1077,15 @@ button {
 }
 .btn-dark:hover { background: #222; }
 
-/* ==========================================================================
-   Gift page  (native rebuild of the /gift NetSuite form embed — geometry
-   and styles measured from the live embed document; see main-gift.liquid)
-   ========================================================================== */
-
 .gift {
   max-width: 970px;
   margin: 0 auto;
-  padding: 0 15px;              /* live container: 970px incl. 15px sides */
-  /* The embed document is Bootstrap 3 defaults, not PT Sans */
+  padding: 0 15px;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
   color: #333;
 }
 
-/* 658px graphic (ribbon, gloves, caption, intro + STEP copy are inside
-   the image), centered, flush against the video row below. */
 .gift-banner {
   display: block;
   width: 658px;
@@ -1226,7 +1094,6 @@ button {
   margin: 0 auto;
 }
 
-/* Three equal columns, no gap, 300px tall — exactly the live embed */
 .gift-videos {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1238,7 +1105,6 @@ button {
   display: block;
 }
 
-/* Form block: light rule above, then the Bootstrap-3-style field grid */
 .gift-form {
   margin-top: 73px;
   border-top: 1px solid #eee;
@@ -1269,8 +1135,6 @@ button {
   background: var(--white);
   border-radius: 4px;
 }
-/* The live embed's text inputs really have zero padding (NetSuite
-   override of the Bootstrap default) — reproduced as measured. */
 .gift-field input {
   border: 1px solid #d5dee7;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -1283,8 +1147,6 @@ button {
   -webkit-appearance: auto;
 }
 
-/* Full-width Bootstrap btn-primary, as captured: btn-block spans the
-   container edges (beyond the 15px field padding), btn-lg line-height. */
 .gift-submit {
   display: block;
   width: calc(100% + 30px);
@@ -1306,15 +1168,7 @@ button {
   margin: 40px 0 0;
 }
 
-/* Mobile — the primary view (QR scan from the card in the box). The form
-   stacks and the submit spans full width like the live embed; the videos
-   stack full-width 16:9 instead of the embed's 120px letterboxed columns,
-   and nothing overflows the viewport (the live embed horizontally
-   scrolls at 390px — platform defect, not design intent). */
 @media (max-width: 767px) {
-  /* Drop the inner padding so the .container gutter alone gives the live
-     15px inset (fields 360px at 390, banner 252px = 70%, submit bleeding
-     to the viewport edges like the live btn-block). */
   .gift { padding: 0; }
   .gift-banner { width: 70%; }
   .gift-videos { grid-template-columns: 1fr; }
@@ -1322,10 +1176,6 @@ button {
   .gift-form { margin-top: 40px; }
   .gift-fields { grid-template-columns: 1fr; }
 }
-
-/* ==========================================================================
-   Category / product pages — responsive
-   ========================================================================== */
 
 @media (min-width: 768px) and (max-width: 991px) {
   .product-grid { grid-template-columns: repeat(3, 1fr); }
@@ -1335,7 +1185,6 @@ button {
   .cat-title { font-size: 28px; }
   .cat-children a { flex: 0 0 33.33%; margin-bottom: 16px; }
 
-  /* Tile variant collapses to three per row with smaller photos/labels */
   .cat-children--tiles { margin-top: 24px; }
   .cat-children--tiles .cat-tile { flex: 0 0 33.33%; margin: 0 0 24px; font-size: 13px; line-height: 1.5; padding: 0 6px; }
   .cat-tile-img { width: 96px; height: 96px; }
@@ -1361,27 +1210,12 @@ button {
   .reviews-block { margin: 56px 0 40px; }
 }
 
-/* ==========================================================================
-   Content pages  (FAQs, policies, About Us — main-page.liquid)
-   --------------------------------------------------------------------------
-   Every value below is a computed-style or pixel measurement from the live
-   pages (2026-08-04 captures + DOM probe): 1140px column, fixed 22px line
-   boxes, 20px paragraph/list-item margins, hollow-circle markers with a
-   31px text indent, #8b1133 maroon accents. The live markup carried the
-   sizes/colors inline and they differ per page (16px body on faqs/
-   shipping/privacy/terms vs 18px on return/about; maroon vs black vs
-   underlined-light headings), so the per-page variants are scoped by
-   .page-body--<handle> rather than forced uniform.
-   ========================================================================== */
-
 .page {
   max-width: 1140px;
   margin: 0 auto;
   padding: 0 15px;
 }
 
-/* Banner graphic — 1200px art rendered at the 1140px column width, ~40px
-   above the first text line, as on the live pages. */
 .page-banner {
   display: block;
   width: 100%;
@@ -1389,8 +1223,6 @@ button {
   margin: 6px 0 40px;
 }
 
-/* Same treatment as .cat-title. Visually hidden (sr-only) when a banner
-   is set: the live pages show only the banner art, never a text title. */
 .page-title {
   font-family: var(--font-narrow);
   font-size: 40px;
@@ -1404,7 +1236,7 @@ button {
 .page-body {
   padding: 0 0 70px;
   font-size: 16px;
-  line-height: 22px;          /* live: fixed 22.005px boxes at every size */
+  line-height: 22px;
   color: var(--ink-dark);
 }
 .page-body p { margin: 0 0 20px; }
@@ -1412,65 +1244,50 @@ button {
   font-size: 18px;
   font-weight: 700;
   color: var(--ink-dark);
-  margin: 24px 0 4px;         /* one ~22px blank line above, text tight below */
+  margin: 24px 0 4px;
 }
 .page-body h2:first-child { margin-top: 0; }
 .page-body ul,
 .page-body ol {
-  list-style: circle;         /* hollow ring markers, verified by pixel scan */
-  padding-left: 31px;         /* text 31px in from the column edge */
+  list-style: circle;
+  padding-left: 31px;
   margin: 10px 0 0;
 }
 .page-body ol { list-style: decimal; }
 .page-body li { margin: 0 0 20px; }
-.page-body a { color: #5271ae; }   /* link blue sampled from contact-us.png */
+.page-body a { color: #5271ae; }
 .page-body a:hover { text-decoration: underline; }
 
-/* --- per-page variants (live pages style these inline, inconsistently) -- */
-
-/* 18px body copy on these two; the others read at 16px */
 .page-body--return-and-refund,
 .page-body--about-us { font-size: 18px; }
 
-/* faqs + about-us had a <br> between list items (a 22px blank line on top
-   of the 20px margin → 42px gaps); return-and-refund has the bare 20px */
 .page-body--faqs li + li,
 .page-body--about-us li + li { margin-top: 22px; }
 
-/* faqs: maroon question lines; section headings stay bold #3a3a3a */
 .page-body--faqs li > strong:first-child { color: var(--maroon); }
 
-/* shipping: maroon headings at body size */
 .page-body--shipping-policy h2 {
   color: var(--maroon);
   font-size: 16px;
 }
 
-/* return: one large maroon headline */
 .page-body--return-and-refund h2 {
   color: var(--maroon);
   font-size: 24px;
   line-height: 28px;
 }
 
-/* privacy: light-weight near-black headings (underline via <u> in the
-   content itself), 10px below like the live h2 */
 .page-body--privacy-policy h2 {
   font-weight: 300;
   color: #0f0f0f;
   margin-bottom: 10px;
 }
 
-/* terms: the ALL-CAPS lead-in line renders at 18px on the live page */
 .page-body--terms-and-conditions > p:first-child { font-size: 18px; }
 
 @media (max-width: 767px) {
   .page-title { font-size: 28px; }
 }
-
-/* ==========================================================================
-   Contact page  (main-contact.liquid — screenshots/contact-us.png)
-   ========================================================================== */
 
 .contact {
   max-width: 1140px;
@@ -1478,7 +1295,6 @@ button {
   padding: 0 15px 90px;
 }
 
-/* Left-aligned italic title, unlike the centered category titles */
 .contact-title {
   font-family: var(--font-narrow);
   font-size: 40px;
@@ -1488,7 +1304,6 @@ button {
   margin: 14px 0 0;
 }
 
-/* Four equal columns, full-height vertical rules between them */
 .contact-cols {
   list-style: none;
   display: grid;
@@ -1522,7 +1337,7 @@ button {
   margin-top: 12px;
 }
 .contact-detail p { margin: 0; }
-.contact-detail a { color: #5271ae; }  /* sampled from the capture */
+.contact-detail a { color: #5271ae; }
 .contact-detail a:hover { color: var(--green-hover); }
 
 @media (max-width: 767px) {
@@ -1534,15 +1349,6 @@ button {
   }
   .contact-col + .contact-col { border-left: 0; }
 }
-
-/* ==========================================================================
-   Warranty  (main-warranty.liquid)
-   --------------------------------------------------------------------------
-   The live page has no AKDY-built content of its own — the body is a single
-   NetSuite lead-form iframe. This just gives it the same container rhythm
-   as the other content pages (breadcrumbs, sr-only title) plus a simple
-   frame for the embed.
-   ========================================================================== */
 
 .warranty {
   max-width: 970px;
@@ -1573,16 +1379,6 @@ button {
   padding: 20px;
   text-align: center;
 }
-
-/* ==========================================================================
-   Magic Rag  (main-magic-rag.liquid)
-   --------------------------------------------------------------------------
-   Same pattern as Warranty: the live page has no AKDY-built content of its
-   own — the body is a single NetSuite lead-form iframe (a review-
-   redemption form). Reuses the same container rhythm as the other content
-   pages, its own class names to match the repo's existing convention of
-   page-specific classes (see .contact / .gift / .warranty).
-   ========================================================================== */
 
 .magic-rag {
   max-width: 970px;
