@@ -271,3 +271,316 @@
     });
   });
 })();
+
+/* ==========================================================================
+   AKDY — shopping cart page behaviour
+   --------------------------------------------------------------------------
+   Recently Viewed has a WRITE side that runs on every product page (records
+   the handle to localStorage) and a READ side (fetch + render) that only
+   runs on the cart page. Everything else here is guarded by the presence
+   of the Recently Viewed / Saved For Later shells, which only exist on the
+   cart template, so this whole block is a no-op everywhere else.
+
+   Cart line changes (qty / remove / save-for-later) call Shopify's AJAX
+   Cart API and then reload the page — line numbers shift whenever a line
+   is removed, so re-rendering from the server on every change is far less
+   error-prone than patching the DOM in place.
+   ========================================================================== */
+
+(function () {
+  "use strict";
+
+  var recentlyViewedShell = document.getElementById("recently-viewed-section");
+  var isCartPage = !!recentlyViewedShell;
+
+  /* Shop currency is USD; if that ever changes this needs a currency arg. */
+  function formatMoney(cents) {
+    return (cents / 100).toLocaleString("en-US", { style: "currency", currency: "USD" });
+  }
+
+  function buildProductCard(p, extraButtonHtml) {
+    var li = document.createElement("li");
+    var img = p.featured_image || (p.images && p.images[0]) || null;
+    li.innerHTML =
+      '<div class="product-card">' +
+        '<a class="card-media" href="' + p.url + '">' +
+          (img
+            ? '<img src="' + img + '" alt="' + String(p.title).replace(/"/g, "&quot;") + '" loading="lazy" width="600" height="600">'
+            : '<div class="img-placeholder"><svg aria-hidden="true"><use href="#i-image"/></svg><span>Image Not Available</span></div>') +
+        '</a>' +
+        '<a class="card-title" href="' + p.url + '">' + p.title + '</a>' +
+        '<p class="card-price">' + formatMoney(p.price) + '</p>' +
+      '</div>';
+    if (extraButtonHtml) {
+      li.querySelector(".product-card").insertAdjacentHTML("beforeend", extraButtonHtml);
+    }
+    return li;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Recently Viewed — write side (runs on product pages)
+   * ------------------------------------------------------------------ */
+  var RECENTLY_VIEWED_KEY = "akdy_recently_viewed";
+  var RECENTLY_VIEWED_MAX = 8;
+
+  var pdpEl = document.querySelector(".pdp[data-product-handle]");
+  if (pdpEl) {
+    var handle = pdpEl.getAttribute("data-product-handle");
+    if (handle) {
+      try {
+        var seen = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || "[]");
+        seen = seen.filter(function (h) { return h !== handle; });
+        seen.unshift(handle);
+        if (seen.length > RECENTLY_VIEWED_MAX) { seen = seen.slice(0, RECENTLY_VIEWED_MAX); }
+        localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(seen));
+      } catch (e) { /* localStorage unavailable (private mode, etc.) — skip silently */ }
+    }
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Recently Viewed — read side (runs on the cart page only)
+   * ------------------------------------------------------------------ */
+  if (isCartPage) {
+    var recentHandles = [];
+    try { recentHandles = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || "[]"); }
+    catch (e) { recentHandles = []; }
+
+    if (recentHandles.length) {
+      var rvGrid = document.getElementById("recently-viewed-grid");
+      Promise.all(
+        recentHandles.map(function (h) {
+          return fetch("/products/" + h + ".js")
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .catch(function () { return null; });
+        })
+      ).then(function (products) {
+        var found = products.filter(Boolean);
+        if (!found.length) { return; }
+        found.forEach(function (p) { rvGrid.appendChild(buildProductCard(p)); });
+        recentlyViewedShell.hidden = false;
+      });
+    }
+  }
+
+  if (!isCartPage) { return; }
+
+  /* ------------------------------------------------------------------ *
+   * Saved For Later — fully client-side (localStorage). "Move to Cart"
+   * calls /cart/add.js for real; "Remove" only touches localStorage.
+   * ------------------------------------------------------------------ */
+  var SAVED_KEY = "akdy_saved_items";
+
+  function getSaved() {
+    try { return JSON.parse(localStorage.getItem(SAVED_KEY) || "[]"); }
+    catch (e) { return []; }
+  }
+  function setSaved(items) {
+    try { localStorage.setItem(SAVED_KEY, JSON.stringify(items)); }
+    catch (e) { /* ignore */ }
+  }
+
+  function renderSaved() {
+    var items = getSaved();
+    var shell = document.getElementById("saved-items-section");
+    var grid = document.getElementById("saved-items-grid");
+    grid.innerHTML = "";
+    if (!items.length) { shell.hidden = true; return; }
+    shell.hidden = false;
+    items.forEach(function (item, index) {
+      var displayTitle = item.title + (item.variantTitle && item.variantTitle !== "Default Title" ? " — " + item.variantTitle : "");
+      var li = buildProductCard(
+        { url: item.url, title: displayTitle, price: item.price, featured_image: item.image },
+        '<button type="button" class="btn-outline saved-item-move" data-index="' + index + '">Move to Cart</button>' +
+        '<button type="button" class="saved-item-remove" data-index="' + index + '">Remove</button>'
+      );
+      grid.appendChild(li);
+    });
+  }
+  renderSaved();
+
+  document.getElementById("saved-items-grid").addEventListener("click", function (e) {
+    var moveBtn = e.target.closest(".saved-item-move");
+    var removeBtn = e.target.closest(".saved-item-remove");
+    if (!moveBtn && !removeBtn) { return; }
+    var index = parseInt((moveBtn || removeBtn).getAttribute("data-index"), 10);
+    var items = getSaved();
+    var item = items[index];
+    if (!item) { return; }
+
+    if (removeBtn) {
+      items.splice(index, 1);
+      setSaved(items);
+      renderSaved();
+      return;
+    }
+
+    moveBtn.disabled = true;
+    fetch("/cart/add.js", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items: [{ id: item.variantId, quantity: 1 }] })
+    })
+      .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+      .then(function (result) {
+        if (!result.ok) {
+          moveBtn.disabled = false;
+          alert(result.data.description || "That item couldn't be added to your cart.");
+          return;
+        }
+        items.splice(index, 1);
+        setSaved(items);
+        window.location.reload();
+      })
+      .catch(function () { moveBtn.disabled = false; });
+  });
+
+  /* ------------------------------------------------------------------ *
+   * Cart line changes — quantity edit, remove, save-for-later.
+   * ------------------------------------------------------------------ */
+  function changeLine(line, quantity) {
+    return fetch("/cart/change.js", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ line: line, quantity: quantity })
+    }).then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); });
+  }
+
+  function showLineError(line, message) {
+    var input = document.getElementById("cart-qty-" + line);
+    var row = input ? input.closest(".cart-item-info") : null;
+    var errorEl = row ? row.querySelector(".cart-item-error") : null;
+    if (errorEl) {
+      errorEl.textContent = message;
+      errorEl.hidden = false;
+    }
+  }
+
+  var cartItemsEl = document.querySelector(".cart-items");
+  if (cartItemsEl) {
+    cartItemsEl.addEventListener("change", function (e) {
+      var input = e.target.closest(".cart-qty-input");
+      if (!input) { return; }
+      var line = parseInt(input.getAttribute("data-line"), 10);
+      var quantity = parseInt(input.value, 10);
+      if (!quantity || quantity < 1) { quantity = 1; input.value = 1; }
+      input.disabled = true;
+      changeLine(line, quantity).then(function (result) {
+        if (!result.ok) {
+          input.disabled = false;
+          showLineError(line, result.data.description || "That quantity isn't available.");
+          return;
+        }
+        window.location.reload();
+      });
+    });
+
+    cartItemsEl.addEventListener("click", function (e) {
+      var removeBtn = e.target.closest(".cart-remove");
+      var saveBtn = e.target.closest(".cart-save-for-later");
+      if (!removeBtn && !saveBtn) { return; }
+      var btn = removeBtn || saveBtn;
+      var line = parseInt(btn.getAttribute("data-line"), 10);
+      btn.disabled = true;
+
+      if (saveBtn) {
+        var items = getSaved();
+        items.unshift({
+          variantId: saveBtn.getAttribute("data-variant-id"),
+          title: saveBtn.getAttribute("data-title"),
+          variantTitle: saveBtn.getAttribute("data-variant-title"),
+          price: parseInt(saveBtn.getAttribute("data-price"), 10),
+          url: saveBtn.getAttribute("data-url"),
+          image: saveBtn.getAttribute("data-image")
+        });
+        setSaved(items);
+      }
+
+      changeLine(line, 0).then(function (result) {
+        if (!result.ok) {
+          btn.disabled = false;
+          showLineError(line, result.data.description || "That couldn't be removed — please try again.");
+          return;
+        }
+        window.location.reload();
+      });
+    });
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Order summary collapsibles (shipping estimator / promo code)
+   * ------------------------------------------------------------------ */
+  document.querySelectorAll(".summary-collapse-toggle").forEach(function (toggle) {
+    toggle.addEventListener("click", function () {
+      var panel = document.getElementById(toggle.getAttribute("aria-controls"));
+      var open = toggle.getAttribute("aria-expanded") === "true";
+      toggle.setAttribute("aria-expanded", open ? "false" : "true");
+      if (panel) { panel.hidden = open; }
+    });
+  });
+
+  /* ------------------------------------------------------------------ *
+   * Shipping estimator — Shopify's own shipping-rates endpoint, no app.
+   * Real numbers; tax is intentionally not shown (see main-cart.liquid).
+   * ------------------------------------------------------------------ */
+  var shipBtn = document.getElementById("ship-estimate-btn");
+  if (shipBtn) {
+    shipBtn.addEventListener("click", function () {
+      var zip = document.getElementById("ship-zip").value.trim();
+      var state = document.getElementById("ship-state").value;
+      var results = document.getElementById("ship-results");
+      if (!zip || !state) {
+        results.innerHTML = '<p class="ship-error">Enter a zip code and pick a state to get a shipping estimate.</p>';
+        return;
+      }
+      shipBtn.disabled = true;
+      results.innerHTML = '<p class="ship-error" style="color: var(--ink-faint);">Getting estimate…</p>';
+      var params = new URLSearchParams({
+        "shipping_address[zip]": zip,
+        "shipping_address[country]": "United States",
+        "shipping_address[province]": state
+      });
+      fetch("/cart/shipping_rates.json?" + params.toString())
+        .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+        .then(function (result) {
+          shipBtn.disabled = false;
+          if (!result.ok) {
+            var msg = "Couldn't get a shipping estimate for that address.";
+            if (result.data.errors && result.data.errors.shipping_address) {
+              msg = "Shipping address: " + result.data.errors.shipping_address.join(", ");
+            }
+            results.innerHTML = '<p class="ship-error">' + msg + '</p>';
+            return;
+          }
+          var rates = result.data.shipping_rates || [];
+          if (!rates.length) {
+            results.innerHTML = '<p class="ship-error">No shipping options are available for that address.</p>';
+            return;
+          }
+          results.innerHTML = rates.map(function (rate) {
+            var dollars = "$" + parseFloat(rate.price).toFixed(2);
+            return '<div class="ship-rate-row"><span>' + rate.name + '</span><span>' + dollars + '</span></div>';
+          }).join("");
+        })
+        .catch(function () {
+          shipBtn.disabled = false;
+          results.innerHTML = '<p class="ship-error">Couldn’t reach the shipping estimator — please try again.</p>';
+        });
+    });
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Promo code — carried to checkout as ?discount=CODE and validated
+   * there; this page never confirms whether a code is valid.
+   * ------------------------------------------------------------------ */
+  var checkoutLink = document.getElementById("cart-checkout-link");
+  var promoInput = document.getElementById("promo-code-input");
+  if (checkoutLink && promoInput) {
+    checkoutLink.addEventListener("click", function (e) {
+      var code = promoInput.value.trim();
+      if (code) {
+        e.preventDefault();
+        window.location.href = "/checkout?discount=" + encodeURIComponent(code);
+      }
+    });
+  }
+})();
