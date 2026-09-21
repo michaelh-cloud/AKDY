@@ -1,21 +1,10 @@
-{% comment %} Stub — real cart template comes later. {% endcomment %}
-<div class="container">
-  <h1>Your Cart</h1>
-  {% if cart.item_count > 0 %}
-    {% form 'cart', cart %}
-      <ul>
-        {% for item in cart.items %}
-          <li>
-            <a href="{{ item.url }}">{{ item.product.title }}</a>
-            — {{ item.quantity }} × {{ item.final_price | money }}
-          </li>
-        {% endfor %}
-      </ul>
-      <p>Subtotal: {{ cart.total_price | money }}</p>
-      <button type="submit" name="checkout" class="btn-green">Check Out</button>
-    {% endform %}
-  {% else %}
-    <p>Your cart is currently empty.</p>
-    <a class="btn-green" href="{{ routes.root_url }}">Continue Shopping</a>
-  {% endif %}
-</div>
+{% comment %}
+  Full cart page is built in sections/main-cart.liquid (with a schema, so
+  every label on the page is editable from the theme customizer). This
+  template just renders that section — kept as a plain .liquid template
+  rather than converting to templates/cart.json + deleting this file,
+  since theme file deletion is blocked as a safety measure on this
+  connection. Functionally identical to a JSON template pointing at the
+  same section.
+{% endcomment %}
+{% section 'main-cart' %}
