@@ -11,7 +11,7 @@
 <div class="container">
   {% render 'breadcrumbs' %}
 
-  <div class="pdp">
+  <div class="pdp" data-product-handle="{{ product.handle }}">
     <div class="pdp-gallery">
       {%- if product.images.size > 0 -%}
         <div class="pdp-media">

@@ -104,5 +104,8 @@
     {%- endcomment -%}
     <span class="crumb-sep">&gt;</span>
     <span class="crumb-current">{{ page.metafields.global.title_tag | default: page.title }}</span>
+  {%- elsif template.name == 'cart' -%}
+    <span class="crumb-sep">&gt;</span>
+    <span class="crumb-current">Shopping Cart</span>
   {%- endif -%}
 </nav>
