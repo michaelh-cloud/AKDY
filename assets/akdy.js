@@ -153,6 +153,39 @@
   "use strict";
 
   /* ------------------------------------------------------------------ *
+   * PDP image gallery — clicking a thumbnail swaps the main image.
+   * Thumbnail buttons carry the full-size src/srcset/alt as data
+   * attributes (see main-product.liquid) so no extra request is needed
+   * to know what to swap in.
+   * ------------------------------------------------------------------ */
+  var pdpThumbs = document.querySelector(".pdp-thumbs");
+  if (pdpThumbs) {
+    var pdpMainImg = document.querySelector(".pdp-media-image");
+    var pdpThumbButtons = Array.prototype.slice.call(
+      pdpThumbs.querySelectorAll("button")
+    );
+    pdpThumbButtons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        if (pdpMainImg) {
+          var fullSrc = btn.getAttribute("data-full-src");
+          var fullSrcset = btn.getAttribute("data-full-srcset");
+          var alt = btn.getAttribute("data-alt");
+          if (fullSrc) { pdpMainImg.src = fullSrc; }
+          if (fullSrcset) {
+            pdpMainImg.setAttribute("srcset", fullSrcset);
+          } else {
+            pdpMainImg.removeAttribute("srcset");
+          }
+          if (alt) { pdpMainImg.alt = alt; }
+        }
+        pdpThumbButtons.forEach(function (b) {
+          b.setAttribute("aria-current", b === btn ? "true" : "false");
+        });
+      });
+    });
+  }
+
+  /* ------------------------------------------------------------------ *
    * PDP tab strip (Overview | Specs & Care) — in-page panes, no URL change
    * ------------------------------------------------------------------ */
   var tabStrip = document.querySelector(".pdp-tabs");

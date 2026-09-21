@@ -15,12 +15,23 @@
     <div class="pdp-gallery">
       {%- if product.images.size > 0 -%}
         <div class="pdp-media">
-          {{ product.featured_image | image_url: width: 1200 | image_tag: widths: '600, 1200', alt: product.title }}
+          {{ product.featured_image | image_url: width: 1200 | image_tag: widths: '600, 1200', alt: product.title, class: 'pdp-media-image' }}
         </div>
         {%- if product.images.size > 1 -%}
           <div class="pdp-thumbs">
-            {%- for image in product.images limit: 6 -%}
-              <button type="button"{% if forloop.first %} aria-current="true"{% endif %}>
+            {%- for image in product.images limit: 12 -%}
+              {%- comment -%}
+                data-full-src/-srcset let akdy.js swap the main image on
+                click without a page reload; the visible thumb stays a small
+                160px crop for fast loading.
+              {%- endcomment -%}
+              <button
+                type="button"
+                {% if forloop.first %}aria-current="true"{% endif %}
+                data-full-src="{{ image | image_url: width: 1200 }}"
+                data-full-srcset="{{ image | image_url: width: 600 }} 600w, {{ image | image_url: width: 1200 }} 1200w"
+                data-alt="{{ image.alt | default: product.title | escape }}"
+              >
                 {{ image | image_url: width: 160 | image_tag: alt: image.alt, loading: 'lazy' }}
               </button>
             {%- endfor -%}
@@ -93,6 +104,27 @@
       {%- endif -%}
     </div>
   </div>
+
+  {%- comment -%}
+    Optional product video: set the custom.youtube_video metafield to a
+    YouTube video ID (the part after v= in the URL) in the product's
+    Metafields section in Shopify admin. Left blank on products with no
+    video — nothing renders.
+  {%- endcomment -%}
+  {%- assign youtube_id = product.metafields.custom.youtube_video.value -%}
+  {%- if youtube_id != blank -%}
+    <div class="pdp-video">
+      <div class="pdp-video-frame">
+        <iframe
+          src="https://www.youtube.com/embed/{{ youtube_id }}"
+          title="{{ product.title | escape }} video"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+          loading="lazy"
+        ></iframe>
+      </div>
+    </div>
+  {%- endif -%}
 
   <div class="reviews-block">
     <h2 class="reviews-heading">{{ section.settings.reviews_heading }}</h2>
