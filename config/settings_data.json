@@ -26,7 +26,7 @@
         "settings": {
           "notice_line1": "Free shipping on All items !",
           "notice_line2": "AKDY products are only shipped to addresses within the contiguous U.S., excluding Alaska, Hawaii, and Puerto Rico.",
-          "notice_line3": "Due to COVID-19, we are noticing that shipping carriers are experiencing delays in processing on some shipments at this time. We appreciate your patience and the continuing support of our products.",
+          "notice_line3": "",
           "menu": "main-menu"
         }
       },
