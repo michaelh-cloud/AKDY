@@ -10,11 +10,22 @@
           {% endif %}
         </a>
         <div class="footer-social">
-          <a href="{{ settings.social_facebook | default: '#' }}"><svg aria-hidden="true"><use href="#i-facebook"/></svg><span class="sr-only">Facebook</span></a>
-          <a href="{{ settings.social_twitter | default: '#' }}"><svg aria-hidden="true"><use href="#i-twitter"/></svg><span class="sr-only">Twitter</span></a>
-          <a href="{{ settings.social_instagram | default: '#' }}"><svg aria-hidden="true"><use href="#i-instagram"/></svg><span class="sr-only">Instagram</span></a>
-          <a href="{{ settings.social_pinterest | default: '#' }}"><svg aria-hidden="true"><use href="#i-pinterest"/></svg><span class="sr-only">Pinterest</span></a>
-          <a href="{{ settings.social_youtube | default: '#' }}"><svg aria-hidden="true"><use href="#i-youtube"/></svg><span class="sr-only">YouTube</span></a>
+          {%- comment -%} Only real, configured links render as icons — an unconfigured platform is left off rather than shown as a dead link. {%- endcomment -%}
+          {%- if settings.social_facebook != blank -%}
+            <a href="{{ settings.social_facebook }}" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-facebook"/></svg><span class="sr-only">Facebook</span></a>
+          {%- endif -%}
+          {%- if settings.social_twitter != blank -%}
+            <a href="{{ settings.social_twitter }}" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-twitter"/></svg><span class="sr-only">Twitter</span></a>
+          {%- endif -%}
+          {%- if settings.social_instagram != blank -%}
+            <a href="{{ settings.social_instagram }}" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-instagram"/></svg><span class="sr-only">Instagram</span></a>
+          {%- endif -%}
+          {%- if settings.social_pinterest != blank -%}
+            <a href="{{ settings.social_pinterest }}" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-pinterest"/></svg><span class="sr-only">Pinterest</span></a>
+          {%- endif -%}
+          {%- if settings.social_youtube != blank -%}
+            <a href="{{ settings.social_youtube }}" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-youtube"/></svg><span class="sr-only">YouTube</span></a>
+          {%- endif -%}
         </div>
       </div>
 

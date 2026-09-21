@@ -9,11 +9,11 @@
  */
 {
   "current": {
-    "social_facebook": "",
+    "social_facebook": "https://www.facebook.com/akdyappliances",
     "social_twitter": "",
-    "social_instagram": "",
+    "social_instagram": "https://www.instagram.com/akdy_appliances/",
     "social_pinterest": "",
-    "social_youtube": "",
+    "social_youtube": "https://www.youtube.com/@akdyusa6153",
     "sections": {
       "announcement-bar": {
         "type": "announcement-bar",
