@@ -49,7 +49,17 @@
       {%- if variant.sku != blank -%}
         <p class="pdp-sku">SKU: {{ variant.sku }}</p>
       {%- endif -%}
-      <p class="pdp-price">{{ variant.price | money }}</p>
+      <div class="pdp-price-row">
+        <p class="pdp-price">{{ variant.price | money }}</p>
+        {%- if variant.compare_at_price > variant.price -%}
+          <p class="pdp-price-compare">{{ variant.compare_at_price | money }}</p>
+          <p class="pdp-price-save">
+            {{ section.settings.save_label }}
+            {{ variant.compare_at_price | minus: variant.price | money }}
+            ({{ variant.compare_at_price | minus: variant.price | times: 100.0 | divided_by: variant.compare_at_price | round }}%)
+          </p>
+        {%- endif -%}
+      </div>
       <div class="review-row">
         <span class="stars" role="img" aria-label="No reviews yet">{% for i in (1..5) %}<svg aria-hidden="true"><use href="#i-star"/></svg>{% endfor %}</span>
         {{ section.settings.no_reviews_label }}
@@ -145,6 +155,13 @@
       "id": "show_share",
       "label": "Show social share icons",
       "default": true
+    },
+    {
+      "type": "text",
+      "id": "save_label",
+      "label": "\"Save\" word before the discount amount",
+      "default": "Save",
+      "info": "Shown next to a struck-through compare-at price when the variant has one set."
     },
     {
       "type": "text",
