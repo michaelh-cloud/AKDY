@@ -823,8 +823,41 @@ button {
 
 .facet-links { list-style: none; }
 .facet-links li { margin-bottom: 8px; }
-.facet-links a { font-size: 13px; color: #555; }
-.facet-links a:hover { color: var(--green-hover); }
+.facet-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #555;
+  cursor: pointer;
+}
+.facet-link:hover { color: var(--green-hover); }
+.facet-link:hover .facet-checkbox { border-color: var(--green-hover); }
+.facet-checkbox {
+  flex: 0 0 14px;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--input-border);
+  border-radius: 3px;
+  background: var(--white);
+  position: relative;
+}
+.facet-link.is-active { color: var(--ink); font-weight: 700; }
+.facet-link.is-active .facet-checkbox {
+  background: var(--green);
+  border-color: var(--green);
+}
+.facet-link.is-active .facet-checkbox::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid var(--white);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
 
 .see-more {
   display: inline-block;
@@ -846,43 +879,6 @@ button {
   color: var(--ink);
   margin: 0 0 36px;
 }
-
-.facet-price .facet-price-heading {
-  font-size: 14px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--ink);
-  border-bottom: 1px solid var(--ink-dark);
-  padding-bottom: 10px;
-}
-.price-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  color: var(--ink);
-  margin-top: 26px;
-}
-/* Static rendering of the range control: green track, dark triangular
-   handles pointing inward at both ends (matches the SC Posh slider). */
-.price-slider {
-  position: relative;
-  height: 5px;
-  background: var(--green);
-  margin-top: 8px;
-}
-.price-slider::before,
-.price-slider::after {
-  content: "";
-  position: absolute;
-  top: -4px;
-  width: 0;
-  height: 0;
-  border-top: 7px solid transparent;
-  border-bottom: 7px solid transparent;
-}
-.price-slider::before { left: 0;  border-left: 10px solid var(--ink-dark); }
-.price-slider::after  { right: 0; border-right: 10px solid var(--ink-dark); }
 
 /* --- results toolbar ------------------------------------------------------ */
 
