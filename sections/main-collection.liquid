@@ -13,24 +13,6 @@
   endif
 
   assign sidebar_menu = section.settings.sidebar_menu
-
-  assign price_filter = nil
-  for filter in collection.filters
-    if filter.type == 'price_range'
-      assign price_filter = filter
-    endif
-  endfor
-
-  assign price_low = nil
-  assign price_high = nil
-  if price_filter
-    assign price_low = price_filter.min_value.value | default: 0
-    assign price_high = price_filter.max_value.value | default: price_filter.range_max
-  elsif collection.products_count > 0
-    assign sorted_prices = collection.products | map: 'price' | sort
-    assign price_low = sorted_prices | first
-    assign price_high = sorted_prices | last
-  endif
 -%}
 
 <div class="container">
@@ -105,11 +87,14 @@
       {%- endif -%}
 
       {%- comment -%}
-        Search & Discovery facets. With none configured and no price data,
-        the sidebar degrades to just the category list above.
+        Search & Discovery facets. With none configured, the sidebar
+        degrades to just the category list above. Each value is a real
+        filter link (full page reload with a filter.* query param) — the
+        checkbox square + "active" state below exist purely so it's
+        visibly clickable and visibly shows what's currently selected.
       {%- endcomment -%}
       {%- assign list_filters = collection.filters | where: 'type', 'list' -%}
-      {%- if list_filters.size > 0 or price_low != nil -%}
+      {%- if list_filters.size > 0 -%}
         <h2 class="facet-label">{{ section.settings.filter_heading }}</h2>
       {%- endif -%}
 
@@ -119,7 +104,12 @@
           <ul class="facet-links">
             {%- for value in filter.values -%}
               <li>
-                <a href="{% if value.active %}{{ value.url_to_remove }}{% else %}{{ value.url_to_add }}{% endif %}">
+                <a
+                  class="facet-link{% if value.active %} is-active{% endif %}"
+                  href="{% if value.active %}{{ value.url_to_remove }}{% else %}{{ value.url_to_add }}{% endif %}"
+                  aria-pressed="{{ value.active }}"
+                >
+                  <span class="facet-checkbox" aria-hidden="true"></span>
                   {{ value.label }} ({{ value.count }})
                 </a>
               </li>
@@ -127,17 +117,6 @@
           </ul>
         </div>
       {%- endfor -%}
-
-      {%- if price_low != nil -%}
-        <div class="facet-price">
-          <h3 class="facet-price-heading">{{ section.settings.price_heading }}</h3>
-          <div class="price-labels">
-            <span>{{ price_low | money }}</span>
-            <span>{{ price_high | money }}</span>
-          </div>
-          <div class="price-slider" aria-hidden="true"></div>
-        </div>
-      {%- endif -%}
     </aside>
 
     <div class="browse-results">
@@ -253,12 +232,6 @@
       "id": "filter_heading",
       "label": "Filter heading",
       "default": "Filter"
-    },
-    {
-      "type": "text",
-      "id": "price_heading",
-      "label": "Price heading",
-      "default": "Price"
     },
     {
       "type": "text",
